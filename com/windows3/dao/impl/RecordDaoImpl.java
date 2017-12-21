@@ -113,6 +113,25 @@ public class RecordDaoImpl implements RecordDao {
 	public List<Record> queryAll() {
 		return read();
 	}
+	@Override
+	public List<Record> queryRecordByUid_Bid(int uid, int bid) {
+		if (bid<1||uid<1) {
+			return null;
+		}
+		// 从文件中读出所有的Book
+		List<Record> uList = read();
+		List<Record> uList2 = new ArrayList<Record>();
+		// 新增记录rid+1
+		if (uList.isEmpty()) {
+			return null;
+		} else {
+			for (Record record2 : uList) {
+				if(record2.getBid()==bid&&record2.getUid()==uid)
+					uList2.add(record2);
+			}
+		}
+		return uList2;
+	}
 	/**
 	 * 从record.txt中读出所有record
 	 * 
@@ -169,11 +188,6 @@ public class RecordDaoImpl implements RecordDao {
 		return false;
 	}
 
-	@Override
-	public List<Record> queryRecordByUid_Bid(int uid, int bid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 }

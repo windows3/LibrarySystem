@@ -8,33 +8,38 @@ import com.windows3.dao.impl.RecordDaoImpl;
 import com.windows3.entity.Record;
 
 public class RecordBizImpl implements RecordBiz {
-	private static RecordDao recordDao = null;
+	private static RecordDao recordDao = new RecordDaoImpl();
 
 	@Override
 	public List<Record> queryRecordAll() {
-		recordDao = new RecordDaoImpl();
 
 		return recordDao.queryAll();
 	}
 
 	@Override
 	public List<Record> queryRecordByUid(int uid) {
-		recordDao = new RecordDaoImpl();
-
 		return recordDao.queryRecordByUid(uid);
 	}
 
 	@Override
 	public List<Record> queryRecordByBid(int bid) {
-		recordDao = new RecordDaoImpl();
 
 		return recordDao.queryRecordByBid(bid);
 	}
 
 	@Override
 	public List<Record> queryRecordByUid_Bid(int uid, int bid) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return recordDao.queryRecordByUid_Bid(uid, bid);
+	}
+
+	@Override
+	public boolean addRecord(int uid,int bid) {
+		if(uid<1||bid<1) {
+			return false;
+		}
+		Record record=new Record(uid,bid);
+		return recordDao.addRecord(record);
 	}
 
 }

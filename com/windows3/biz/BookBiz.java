@@ -1,5 +1,7 @@
 package com.windows3.biz;
 
+import java.util.List;
+
 import com.windows3.entity.Book;
 
 public interface BookBiz {
@@ -13,7 +15,13 @@ public interface BookBiz {
 
 	boolean returnBook(String uname);
 
-	Book queryBookById(int bid);
+	Book queryBookByBid(int bid);
+
+	List<Book> queryByStatus(int status);
+
+	boolean lendBook(int bid);
+
+	int queryBookByBname(String bname);
 	
 
 }

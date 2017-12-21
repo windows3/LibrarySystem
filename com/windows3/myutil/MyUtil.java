@@ -33,5 +33,13 @@ public class MyUtil {
 		String password=input.next();
 		return password;	
 	}
+	public static boolean isGoOn() {
+		System.out.println("请问是否继续,n(N)为继续返回");
+		String choose = input.next();
+		if (choose.equals("n") || choose.equals("N"))
+			return true;
+		
+		return false;
+	}
 
 }

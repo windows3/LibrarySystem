@@ -1,5 +1,7 @@
 package com.windows3.biz.impl;
 
+import java.util.List;
+
 import com.windows3.biz.BookBiz;
 import com.windows3.dao.BookDao;
 import com.windows3.dao.impl.BookDaoImpl;
@@ -13,7 +15,6 @@ public class BookBizImpl implements BookBiz {
 		if (book == null) {
 			return false;
 		}
-
 		Book u = bookDao.queryBookByName(book.getName());
 		if (u == null) // 書不存在，書名合法
 			return bookDao.addBook(book);
@@ -28,6 +29,24 @@ public class BookBizImpl implements BookBiz {
 			return false;
 		else {
 			Book book = bookDao.queryBookByName(uname);
+			if (book == null) {
+				return false;
+			} else {
+				// 从biz层拿个方法用来更新书本状态
+				boolean flag = bookDao.updateBook(book);
+				if (flag)
+					return true;
+				else
+					return false;
+			}
+		}
+	}
+	@Override
+	public boolean lendBook(int bid) {
+		if (bid <1)
+			return false;
+		else {
+			Book book = bookDao.queryBookByBid(bid);
 			if (book == null) {
 				return false;
 			} else {
@@ -65,7 +84,7 @@ public class BookBizImpl implements BookBiz {
 		if (bid < 1)
 			return false;
 		else {
-			Book book = bookDao.queryBookById(bid);
+			Book book = bookDao.queryBookByBid(bid);
 			if (book == null) {
 				return false;
 			} else {
@@ -80,13 +99,25 @@ public class BookBizImpl implements BookBiz {
 	}
 
 	@Override
-	public Book queryBookById(int bid) {
+	public Book queryBookByBid(int bid) {
 		if (bid < 1) {
 			return null;
 		}
-		Book book = bookDao.queryBookById(bid);
+		Book book = bookDao.queryBookByBid(bid);
 
 		return book;
 
+	}
+
+	@Override
+	public List<Book> queryByStatus(int status) {
+		List<Book> uList=bookDao.queryBookByStatus(status);
+		return uList;
+	}
+
+	@Override
+	public int queryBookByBname(String bname) {
+		bookDao.queryBookByName(bname);
+		return bookDao.queryBookByName(bname).getId();
 	}
 }

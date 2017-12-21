@@ -40,4 +40,9 @@ private UserDao userDao = new UserDaoImpl();
 			}
 		}
 	}
+
+	@Override
+	public int queryUserByUname(String uname) {
+		return userDao.queryUserByName(uname).getId();
+	}
 }

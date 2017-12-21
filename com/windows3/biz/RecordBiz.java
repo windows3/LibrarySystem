@@ -12,5 +12,5 @@ public interface RecordBiz {
 
 	List<Record> queryRecordByBid(int bid);
 	List<Record> queryRecordByUid_Bid(int uid,int bid);
-
+    boolean addRecord(int uid,int bid);
 }

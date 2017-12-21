@@ -9,4 +9,6 @@ public interface UserBiz {
 
 	// µÇÂ¼
 	User login(String uname, String password);
+
+	int queryUserByUname(String uname);
 }

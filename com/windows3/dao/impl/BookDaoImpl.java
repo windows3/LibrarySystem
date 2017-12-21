@@ -18,6 +18,7 @@ public class BookDaoImpl implements BookDao {
 	private File file = new File("book.txt");
 	private ObjectInputStream ois = null;
 	private ObjectOutputStream oos = null;
+
 	@Override
 	public boolean addBook(Book book) {
 		if (book == null) {
@@ -28,9 +29,10 @@ public class BookDaoImpl implements BookDao {
 		// ÐÂÔöÊéid+1
 		if (uList.isEmpty()) {
 			book.setId(1);
+			book.setStatus(1);
 		} else {
 			for (Book book2 : uList) {
-				if(book.getName().equals(book2.getName())) {
+				if (book.getName().equals(book2.getName())) {
 					return false;
 				}
 			}
@@ -45,17 +47,17 @@ public class BookDaoImpl implements BookDao {
 
 	@Override
 	public boolean delBookById(int uid) {
-		if(uid<1)
+		if (uid < 1)
 			return false;
-		
+
 		List<Book> uList = read();
 		for (Book book : uList) {
-			if (book.getId()==uid) {
-				if(book.getStatus()==0) {
-				     return false;
-				}else {
-					 uList.remove(book);
-					 break;
+			if (book.getId() == uid) {
+				if (book.getStatus() == 0) {
+					return false;
+				} else {
+					uList.remove(book);
+					break;
 				}
 			}
 		}
@@ -64,25 +66,25 @@ public class BookDaoImpl implements BookDao {
 
 	@Override
 	public boolean updateBook(Book newBook) {
-		if(newBook==null)
+		if (newBook == null)
 			return false;
 		List<Book> uList = read();
 		for (Book book : uList) {
 			if (book.getName().equals(newBook.getName())) {
-				if(book.getStatus()==1) 
-				      book.setStatus(0);
+				if (book.getStatus() == 1)
+					book.setStatus(0);
 				else
-					 book.setStatus(1);
+					book.setStatus(1);
 			}
 		}
 		return write(uList);
 	}
 
 	@Override
-	public Book queryBookById(int uid) {
+	public Book queryBookByBid(int uid) {
 		List<Book> uList = read();
 		for (Book book : uList) {
-			if (book.getId()==uid) {
+			if (book.getId() == uid) {
 				return book;
 			}
 		}
@@ -91,10 +93,13 @@ public class BookDaoImpl implements BookDao {
 
 	@Override
 	public Book queryBookByName(String bname) {
+		if(bname==null) {
+			return null;
+		}
 		List<Book> uList = read();
 		for (Book book : uList) {
 			if (book.getName().equals(bname))
-				return book;	
+				return book;
 		}
 		return null;
 	}
@@ -103,6 +108,24 @@ public class BookDaoImpl implements BookDao {
 	public List<Book> queryAll() {
 		List<Book> uList = read();
 		return uList;
+	}
+
+	@Override
+	public List<Book> queryBookByStatus(int status) {
+		if(status<1) {
+			return null;
+		}
+		List<Book> uList = read();
+		List<Book> uList2 = new ArrayList<Book>();
+		if(uList==null) {
+			return null;
+		}
+		for (Book book : uList) {
+			if (book.getStatus() == 1)
+				uList2.add(book);
+		}
+			return uList2;
+		
 	}
 
 	/**
@@ -146,20 +169,19 @@ public class BookDaoImpl implements BookDao {
 			oos.writeObject(uList);
 			return true;
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		} finally {
 			if (oos != null) {
 				try {
 					oos.close();
 				} catch (IOException e) {
-					
+
 					e.printStackTrace();
 				}
 			}
 		}
 		return false;
 	}
-
 
 }
