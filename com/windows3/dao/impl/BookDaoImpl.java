@@ -31,10 +31,10 @@ public class BookDaoImpl implements BookDao {
 		} else {
 			for (Book book2 : uList) {
 				if(book.getName().equals(book2.getName())) {
-					book2.setBnum(book.getBnum());
-					return write(uList);
+					return false;
 				}
 			}
+			book.setStatus(1);
 			int newId = uList.get(uList.size() - 1).getId() + 1;
 			book.setId(newId);
 		}
@@ -45,8 +45,21 @@ public class BookDaoImpl implements BookDao {
 
 	@Override
 	public boolean delBookById(int uid) {
-		// TODO Auto-generated method stub
-		return false;
+		if(uid<1)
+			return false;
+		
+		List<Book> uList = read();
+		for (Book book : uList) {
+			if (book.getId()==uid) {
+				if(book.getStatus()==0) {
+				     return false;
+				}else {
+					 uList.remove(book);
+					 break;
+				}
+			}
+		}
+		return write(uList);
 	}
 
 	@Override
@@ -56,26 +69,15 @@ public class BookDaoImpl implements BookDao {
 		List<Book> uList = read();
 		for (Book book : uList) {
 			if (book.getName().equals(newBook.getName())) {
-				book.setBnum(book.getBnum()-1);
-//				System.out.println(book);
+				if(book.getStatus()==1) 
+				      book.setStatus(0);
+				else
+					 book.setStatus(1);
 			}
 		}
 		return write(uList);
 	}
 
-	@Override
-	public boolean updateBook2(Book newBook) {//一次加一本
-		if(newBook==null)
-			return false;
-		List<Book> uList = read();
-		for (Book book : uList) {
-			if (book.getName().equals(newBook.getName())) {
-				book.setBnum(book.getBnum()+1);
-				System.out.println(book);
-			}
-		}
-		return write(uList);
-	}
 	@Override
 	public Book queryBookById(int uid) {
 		List<Book> uList = read();
@@ -91,9 +93,8 @@ public class BookDaoImpl implements BookDao {
 	public Book queryBookByName(String bname) {
 		List<Book> uList = read();
 		for (Book book : uList) {
-			if (book.getName().equals(bname)) {
-				return book;
-			}
+			if (book.getName().equals(bname))
+				return book;	
 		}
 		return null;
 	}
@@ -101,12 +102,11 @@ public class BookDaoImpl implements BookDao {
 	@Override
 	public List<Book> queryAll() {
 		List<Book> uList = read();
-
 		return uList;
 	}
 
 	/**
-	 * 从user.dat中读出所有User
+	 * 从book.txt中读出所有book
 	 * 
 	 * @return
 	 */

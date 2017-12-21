@@ -13,7 +13,7 @@ public interface BookDao {
 	Book queryBookById(int uid);//根据书id查
 	Book queryBookByName(String uname);//根据书名字查
 	List<Book> queryAll();//查询所有书
-	boolean updateBook2(Book newbook);
+
 
 	
 }

@@ -7,22 +7,22 @@ import com.windows3.entity.Book;
 public class Book implements Serializable{
 	private int id;
 	private String name;
-	private int bnum;
+	private int status;
 	
 	public Book() {
 	}
 
-	public Book(String name, int bnum) {
+	public Book(String name) {
 		super();
 		this.name = name;
-		this.bnum = bnum;
+		
 	}
 
-	public Book(int id, String name, int bnum) {
+	public Book(int id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.bnum = bnum;
+		
 	}
 
 	public int getId() {
@@ -43,12 +43,12 @@ public class Book implements Serializable{
 
 	
 
-	public int getBnum() {
-		return bnum;
+	public int getStatus() {
+		return status;
 	}
 
-	public void setBnum(int bnum) {
-		this.bnum = bnum;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class Book implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", 书名=" + name + ", 书的剩余数量=" + bnum + "]";
+		return "Book [id=" + id + ", 书名=" + name + ", 书的状态=" + status + "]";
 	}
 	
 	

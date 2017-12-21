@@ -4,6 +4,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MyUtil {
+	public final static String INQUIRY_NAME="请输入您的名字:";
+	public final static String INQUIRY_PASSWORD="请输入您的密码:";
 	private static Scanner input = new Scanner(System.in);
 	public static int inputNum(int min,int max){
 		do{
@@ -21,9 +23,15 @@ public class MyUtil {
 
 		}while(true);
 	}
-	public static int numInspect() {
-		int num=input.nextInt();
-		return 0;
+	public static String inputName() {
+		System.out.println(INQUIRY_NAME);
+		String name=input.next();
+		return name;	
+	}
+	public static String inputPassword() {
+		System.out.println(INQUIRY_PASSWORD);
+		String password=input.next();
+		return password;	
 	}
 
 }

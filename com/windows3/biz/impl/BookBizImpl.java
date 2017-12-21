@@ -15,11 +15,11 @@ public class BookBizImpl implements BookBiz {
 		}
 
 		Book u = bookDao.queryBookByName(book.getName());
-		if (u == null) {// 用户不存在，用户名合法
+		if (u == null) // 書不存在，書名合法
 			return bookDao.addBook(book);
-		} else {
+		else
 			return false;
-		}
+
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class BookBizImpl implements BookBiz {
 			if (book == null) {
 				return false;
 			} else {
-				// 从biz层拿个方法用来更新书本的数量，一次一本
+				// 从biz层拿个方法用来更新书本状态
 				boolean flag = bookDao.updateBook(book);
 				if (flag)
 					return true;
@@ -50,8 +50,8 @@ public class BookBizImpl implements BookBiz {
 			if (book == null) {
 				return false;
 			} else {
-				// 从biz层拿个方法用来更新书本的数量，一次增加一本
-				boolean flag = bookDao.updateBook2(book);
+				// 从biz层拿个方法用来更新书本状态
+				boolean flag = bookDao.updateBook(book);
 				if (flag)
 					return true;
 				else
@@ -62,7 +62,7 @@ public class BookBizImpl implements BookBiz {
 
 	@Override
 	public boolean returnBook(int bid) {
-		if (bid<1)
+		if (bid < 1)
 			return false;
 		else {
 			Book book = bookDao.queryBookById(bid);
@@ -70,7 +70,7 @@ public class BookBizImpl implements BookBiz {
 				return false;
 			} else {
 				// 从biz层拿个方法用来更新书本的数量，一次增加一本
-				boolean flag = bookDao.updateBook2(book);
+				boolean flag = bookDao.updateBook(book);
 				if (flag)
 					return true;
 				else
@@ -78,15 +78,15 @@ public class BookBizImpl implements BookBiz {
 			}
 		}
 	}
+
 	@Override
 	public Book queryBookById(int bid) {
-		if(bid<1) {
+		if (bid < 1) {
 			return null;
 		}
-		Book book=bookDao.queryBookById(bid);
-		
+		Book book = bookDao.queryBookById(bid);
+
 		return book;
 
-		
 	}
 }

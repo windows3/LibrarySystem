@@ -13,16 +13,17 @@ public class BookDaoTest {
 	@Test
 	public void test() {
 		BookDao bookDao=new BookDaoImpl();
-		Book book=new Book("1",3);
+		Book book=new Book("2");
+		Book book1=new Book("1");
 		
 		System.out.println(bookDao.addBook(book));
+		System.out.println(bookDao.addBook(book1));
 		
 	}
 	@Test
 	public void test2() {
 		BookDao bookDao=new BookDaoImpl();
-		Book book=new Book("1",3);
-		bookDao.addBook(book);
+		Book book=new Book("1");
 		System.out.println(bookDao.updateBook(book));
 		System.out.println(bookDao.queryBookByName("1"));
 		
@@ -32,8 +33,12 @@ public class BookDaoTest {
 		BookDao bookDao=new BookDaoImpl();
 		
 		Book book=bookDao.queryBookById(1);
-		System.out.println(book);
-		
+		System.out.println(book);	
+	}
+	@Test
+	public void test4() {
+		BookDao bookDao=new BookDaoImpl();
+		System.out.println(bookDao.delBookById(1));
 		
 	}
 }
