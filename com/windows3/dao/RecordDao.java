@@ -14,6 +14,8 @@ public interface RecordDao {
 	List<Record> queryRecordByBid(int bid);//根据书id查
 	List<Record> queryRecordByUid_Bid(int uid,int bid);//根据书id查
 	List<Record> queryAll();//查询所有记录
+	List<Record> queryRecordByBidUnreturned(int uid);
+	List<Record> queryRecordByBidReturned(int uid);
 
 
 	

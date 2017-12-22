@@ -41,5 +41,16 @@ public class MyUtil {
 		
 		return false;
 	}
+	public static int inputNum(){
+		while(true) {
+			
+			try {
+				int num=input.nextInt();
+				return num;
+			}catch (InputMismatchException e) {
+				System.out.println("输入数据不匹配,请重新输入");
+			}
+		}
+	}
 
 }

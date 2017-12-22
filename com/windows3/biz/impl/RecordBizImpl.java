@@ -42,4 +42,16 @@ public class RecordBizImpl implements RecordBiz {
 		return recordDao.addRecord(record);
 	}
 
+	@Override
+	public List<Record> queryRecordByUidUnreturned(int uid) {
+		
+		return recordDao.queryRecordByBidUnreturned(uid);
+	}
+
+	@Override
+	public List<Record> queryRecordByUidreturned(int uid) {
+		// TODO Auto-generated method stub
+		return recordDao.queryRecordByBidReturned(uid);
+	}
+
 }

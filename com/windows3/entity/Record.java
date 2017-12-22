@@ -1,6 +1,8 @@
 package com.windows3.entity;
 
-public class Record {
+import java.io.Serializable;
+
+public class Record implements Serializable{
 	private int rid;
 	private String lendTime;
 	private String returnTime;
@@ -17,6 +19,15 @@ public class Record {
 		super();
 		this.rid = rid;
 		this.lendTime = rtime;
+		this.uid = uid;
+		this.bid = bid;
+	}
+
+	public Record(int rid, String lendTime, String returnTime, int uid, int bid) {
+		super();
+		this.rid = rid;
+		this.lendTime = lendTime;
+		this.returnTime = returnTime;
 		this.uid = uid;
 		this.bid = bid;
 	}

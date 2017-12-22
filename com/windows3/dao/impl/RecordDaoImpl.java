@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.windows3.dao.RecordDao;
+import com.windows3.entity.Book;
+import com.windows3.entity.Record;
+import com.windows3.entity.Record;
 import com.windows3.entity.Record;
 import com.windows3.entity.Record;
 import com.windows3.entity.Record;
@@ -21,21 +24,37 @@ public class RecordDaoImpl implements RecordDao {
 	private File file = new File("record.txt");
 	private ObjectInputStream ois = null;
 	private ObjectOutputStream oos = null;
+
 	@Override
 	public boolean addRecord(Record record) {
 		if (record == null) {
 			return false;
 		}
-		// 从文件中读出所有的Book
 		List<Record> uList = read();
-		// 新增记录rid+1
-		String lendTime=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		record.setLendTime(lendTime);
-		record.setReturnTime("0");
-
+		// 新增书id+1
 		if (uList.isEmpty()) {
 			record.setRid(1);
+			String lendTime=new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
+			String returnTime="0";
+			record.setLendTime(lendTime);
+			record.setReturnTime(returnTime);
 		} else {
+			for (Record record2 : uList) {
+				if(record2.getUid()==record.getUid()&&record2.getBid()==record.getBid()) {
+					if(record2.getReturnTime().equals("未归还")) {
+						record2.setReturnTime(new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date()));
+						return write(uList);	
+					}
+					if(!record2.getReturnTime().equals("未归还")&&!record2.getLendTime().equals("0")) {
+						return false;
+					}
+				}
+				
+			}
+			String lendTime=new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
+			String returnTime="0";
+			record.setLendTime(lendTime);
+			record.setReturnTime(returnTime);
 			int newId = uList.get(uList.size() - 1).getRid() + 1;
 			record.setRid(newId);
 		}
@@ -46,7 +65,7 @@ public class RecordDaoImpl implements RecordDao {
 
 	@Override
 	public boolean delRecordByRid(int rid) {
-		if (rid<1) {
+		if (rid < 1) {
 			return false;
 		}
 		// 从文件中读出所有的Book
@@ -56,8 +75,13 @@ public class RecordDaoImpl implements RecordDao {
 			return false;
 		} else {
 			for (Record record2 : uList) {
-				if(record2.getRid()==rid)
-					uList.remove(record2);
+				if (record2.getRid() == rid) {
+					if (record2.getReturnTime().equals("未归还")) {
+						return false;
+					} else {
+						uList.remove(record2);
+					}
+				}
 			}
 		}
 		return write(uList);
@@ -71,7 +95,7 @@ public class RecordDaoImpl implements RecordDao {
 
 	@Override
 	public List<Record> queryRecordByUid(int uid) {
-		if (uid<1) {
+		if (uid < 1) {
 			return null;
 		}
 		// 从文件中读出所有的Book
@@ -82,7 +106,7 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		} else {
 			for (Record record2 : uList) {
-				if(record2.getUid()==uid)
+				if (record2.getUid() == uid)
 					uList2.add(record2);
 			}
 		}
@@ -91,7 +115,7 @@ public class RecordDaoImpl implements RecordDao {
 
 	@Override
 	public List<Record> queryRecordByBid(int bid) {
-		if (bid<1) {
+		if (bid < 1) {
 			return null;
 		}
 		// 从文件中读出所有的Book
@@ -102,42 +126,81 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		} else {
 			for (Record record2 : uList) {
-				if(record2.getBid()==bid)
+				if (record2.getBid() == bid)
+					uList2.add(record2);
+			}
+		}
+		return uList2;
+	}
+	@Override
+	public List<Record> queryRecordByBidUnreturned(int uid) {
+		if (uid < 1) {
+			return null;
+		}
+		// 从文件中读出所有的Book
+		List<Record> uList = read();
+		List<Record> uList2 = new ArrayList<Record>();
+		// 新增记录rid+1
+		if (uList.isEmpty()) {
+			return null;
+		} else {
+			for (Record record2 : uList) {
+				if (record2.getUid() == uid&&record2.getReturnTime().equals("未归还"))
+					uList2.add(record2);
+			}
+		}
+		return uList2;
+	}
+	@Override
+	public List<Record> queryRecordByBidReturned(int uid) {
+		if (uid < 1) {
+			return null;
+		}
+		// 从文件中读出所有的Book
+		List<Record> uList = read();
+		List<Record> uList2 = new ArrayList<Record>();
+		// 新增记录rid+1
+		if (uList.isEmpty()) {
+			return null;
+		} else {
+			for (Record record2 : uList) {
+				if (record2.getUid() == uid&&!record2.getReturnTime().equals("未归还"))
+					uList2.add(record2);
+			}
+		}
+		return uList2;
+	}
+	@Override
+	public List<Record> queryAll() {
+		return read();
+	}
+
+	@Override
+	public List<Record> queryRecordByUid_Bid(int uid, int bid) {
+		if (bid < 1 || uid < 1) {
+			return null;
+		}
+		// 从文件中读出所有的record
+		List<Record> uList = read();
+		List<Record> uList2 = new ArrayList<Record>();
+		// 新增记录rid+1
+		if (uList.isEmpty()) {
+			return null;
+		} else {
+			for (Record record2 : uList) {
+				if (record2.getBid() == bid && record2.getUid() == uid)
 					uList2.add(record2);
 			}
 		}
 		return uList2;
 	}
 
-	@Override
-	public List<Record> queryAll() {
-		return read();
-	}
-	@Override
-	public List<Record> queryRecordByUid_Bid(int uid, int bid) {
-		if (bid<1||uid<1) {
-			return null;
-		}
-		// 从文件中读出所有的Book
-		List<Record> uList = read();
-		List<Record> uList2 = new ArrayList<Record>();
-		// 新增记录rid+1
-		if (uList.isEmpty()) {
-			return null;
-		} else {
-			for (Record record2 : uList) {
-				if(record2.getBid()==bid&&record2.getUid()==uid)
-					uList2.add(record2);
-			}
-		}
-		return uList2;
-	}
 	/**
 	 * 从record.txt中读出所有record
 	 * 
 	 * @return
 	 */
-	private List<Record> read() {
+	public List<Record> read() {
 		// 第一次运行时，文件不存在，会崩
 		List<Record> uList = new ArrayList<Record>();
 		try {
@@ -158,6 +221,7 @@ public class RecordDaoImpl implements RecordDao {
 				}
 			}
 		}
+		System.out.println(uList);
 		return uList;
 	}
 
@@ -167,20 +231,20 @@ public class RecordDaoImpl implements RecordDao {
 	 * @param uList
 	 * @return
 	 */
-	private boolean write(List<Record> uList) {
+	public boolean write(List<Record> uList) {
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream(file));
 			oos.writeObject(uList);
 			return true;
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		} finally {
 			if (oos != null) {
 				try {
 					oos.close();
 				} catch (IOException e) {
-					
+
 					e.printStackTrace();
 				}
 			}
@@ -188,6 +252,6 @@ public class RecordDaoImpl implements RecordDao {
 		return false;
 	}
 
-
+	
 
 }

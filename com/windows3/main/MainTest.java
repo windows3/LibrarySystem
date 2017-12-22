@@ -10,8 +10,5 @@ public class MainTest {
 		m.mainMenu();
 //		MenuView m=new MenuView();
 //		m.bookMenu();
-	}
-	
-  
-	
+	}	
 }

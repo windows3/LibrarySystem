@@ -17,7 +17,8 @@ public class UserMenu {
 	private static UserBiz userBiz = new UserBizImpl();
 	private static BookBiz bookBiz = new BookBizImpl();;
 	private static Scanner input = new Scanner(System.in);;
-	private static RecordBiz recordBiz = new RecordBizImpl();;
+	private static RecordBiz recordBiz = new RecordBizImpl();
+	private static int uid = 0;
 
 	public static void mainMenu() {
 		while (true) {
@@ -64,7 +65,7 @@ public class UserMenu {
 		}
 	}
 
-	private static void loginMainMenu() {// 登录
+	private static void loginMainMenu() {// 登录菜单
 		while (true) {
 			System.out.println("*********************");
 			// 登录
@@ -74,6 +75,7 @@ public class UserMenu {
 			if (userBiz.login(name, password) == null) {
 				System.out.println("您输入的用户不存在");
 			} else {
+				uid = userBiz.queryUserByUname(name);
 				System.out.println(user + "--登陆成功");
 				System.out.println("1==>本人租赁信息");
 				System.out.println("2==>图书");
@@ -109,13 +111,13 @@ public class UserMenu {
 			int choice = MyUtil.inputNum(0, 2);
 			switch (choice) {
 			case 1:
-				// returnedLeaseMainMenu();//已归还租赁记录
+				returnedLeaseMainMenu();// 已归还租赁记录
 				continue;
 			case 2:
-				// unreturnedLeaseMainMenu();// 未归还租赁记录
+				unreturnedLeaseMainMenu();// 未归还租赁记录
 				continue;
 			case 3:
-				// allLeaseMainMenu();//所有租赁记录
+				allLeaseMainMenu();//所有租赁记录
 				continue;
 			case 0:
 				// 退出
@@ -125,6 +127,61 @@ public class UserMenu {
 				break;
 		}
 
+	}
+	private static void allLeaseMainMenu() {// 本人所有租赁记录
+		System.out.println("********************");
+		System.out.println(recordBiz.queryRecordByUid(uid));
+	}
+
+	private static void returnedLeaseMainMenu() {// 查看本人已归还租赁记录
+		System.out.println(recordBiz.queryRecordByUidreturned(uid));
+
+	}
+
+	private static void unreturnedLeaseMainMenu() {// 查看本人未归还租赁记录
+		System.out.println(recordBiz.queryRecordByUidUnreturned(uid));
+		while (true) {
+			System.out.println("*********************");
+			System.out.println("1==>还书");
+			System.out.println("0==>返回上一级");
+			System.out.println("请输入您的选择:");
+			int choice = MyUtil.inputNum(0, 1);
+			switch (choice) {
+			case 1:
+				returnBook();// 还书
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+	}
+
+	private static void returnBook() {// 还书
+		while (true) {
+			System.out.println("*********************");
+			System.out.println("1==>通过书本id还书");
+			System.out.println("2==>通过书本名字还书");
+			System.out.println("0==>返回上一级");
+			System.out.println("请输入您的选择:");
+			int choice = MyUtil.inputNum(0, 1);
+			switch (choice) {
+			case 1:
+
+				returnBookByBname();// 还书
+				continue;
+			case 2:
+				returnBookByBid();// 还书
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
 	}
 
 	private static void bookMainMenu(String uname) {
@@ -207,10 +264,11 @@ public class UserMenu {
 			System.out.println("请输入书本的名字");
 			String bname = input.next();
 			boolean flag = bookBiz.lendBook(bname);
-			boolean flag2 =recordBiz.addRecord(userBiz.queryUserByUname(uname), bookBiz.queryBookByBname(bname));
-			if (flag&&flag2)
-				System.out.println("您成功借出一本书:" + bname);
-
+			if (flag) {
+				boolean flag2 = recordBiz.addRecord(userBiz.queryUserByUname(uname), bookBiz.queryBookByBname(bname));
+				if (flag2)
+					System.out.println("您成功借出一本书:" + bname);
+			}
 			if (MyUtil.isGoOn())
 				break;
 		}
@@ -218,6 +276,7 @@ public class UserMenu {
 
 	private static void lendBookByBid(String uname) {
 		while (true) {
+			System.out.println("**********************");
 			System.out.println("请输入书本的id");
 			try {
 				int bid = input.nextInt();
@@ -245,18 +304,35 @@ public class UserMenu {
 
 	}
 
-	private static void returnBookByBname(String bname) {// 还一本书
-		bookBiz = new BookBizImpl();
-		boolean flag = bookBiz.returnBook(bname);
-		if (flag)
-			System.out.println("您成功还了一本:" + bname);
+	private static void returnBookByBname() {// 还一本书
+		while (true) {
+			System.out.println("**********************");
+			System.out.println("请输入书本的名字");
+			String bname = input.next();
+			boolean flag = bookBiz.returnBook(bname);
+			if (flag)
+				System.out.println("您成功还了一本:" + bname);
+			else
+				System.out.println("还书失败");
+			if (MyUtil.isGoOn())
+				break;
+
+		}
 	}
 
-	private static void returnBookByBid(int bid) {
-		bookBiz = new BookBizImpl();
-		boolean flag = bookBiz.returnBook(bid);
-		if (flag)
-			System.out.println("您成功还了一本:");
+	private static void returnBookByBid() {
+		while (true) {
+			System.out.println("请输入书本的id");
+			int bid=MyUtil.inputNum();
+			boolean flag = bookBiz.returnBook(bid);
+			if (flag)
+				System.out.println("您成功还了一本:");
+			else {
+				System.out.println("还书失败");
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
 	}
 
 }

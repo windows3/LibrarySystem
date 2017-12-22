@@ -139,6 +139,7 @@ public class BookDaoImpl implements BookDao {
 		try {
 			ois = new ObjectInputStream(new FileInputStream(file));
 			uList = (List<Book>) ois.readObject();
+			System.out.println("¶Á³ö");
 		} catch (FileNotFoundException e) {
 			// file.getParentFile().mkdirs();
 		} catch (ClassNotFoundException e) {
