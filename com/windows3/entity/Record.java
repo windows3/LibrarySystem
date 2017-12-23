@@ -3,6 +3,10 @@ package com.windows3.entity;
 import java.io.Serializable;
 
 public class Record implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5450107071326016223L;
 	private int rid;
 	private String lendTime;
 	private String returnTime;
@@ -81,8 +85,8 @@ public class Record implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Record [rid=" + rid + ", lendTime=" + lendTime + ", returnTime=" + returnTime + ", uid=" + uid
-				+ ", bid=" + bid + "]";
+		return "记录ID:【" + rid + "】 借出时间:【" + lendTime + "】  归还时间:【" + returnTime + "】  借出用户ID【" + uid
+				+ "】 借出书本ID:【" + bid + "】";
 	}
 
 

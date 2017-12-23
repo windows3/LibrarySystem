@@ -1,6 +1,5 @@
 package com.windows3.junit;
 
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -26,6 +25,11 @@ public class UserBizTest {
 		if(user!=null) {
 			System.out.println(user);
 		}
+	}
+	@Test
+	public void test3() {
+		UserBiz userBiz=new UserBizImpl();
+		System.out.println(userBiz.queryUserByUname("0"));
 	}
 
 }

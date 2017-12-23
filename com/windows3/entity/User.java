@@ -5,6 +5,10 @@ import java.io.Serializable;
 import com.windows3.entity.User;
 
 public class User implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3599166662858452717L;
 	private int id;
 	private String name;
 	private String password;

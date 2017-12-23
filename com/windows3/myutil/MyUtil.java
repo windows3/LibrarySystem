@@ -4,8 +4,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MyUtil {
-	public final static String INQUIRY_NAME="请输入您的名字:";
-	public final static String INQUIRY_PASSWORD="请输入您的密码:";
+	private final static String INQUIRY_NAME="请输入名字:";
+	private final static String INQUIRY_PASSWORD="请输入您的密码:";
 	private static Scanner input = new Scanner(System.in);
 	public static int inputNum(int min,int max){
 		do{
@@ -33,13 +33,14 @@ public class MyUtil {
 		String password=input.next();
 		return password;	
 	}
+
 	public static boolean isGoOn() {
-		System.out.println("请问是否继续,n(N)为继续返回");
+		System.out.println("请问是否继续,n(N)不返回,其他默认返回");
 		String choose = input.next();
 		if (choose.equals("n") || choose.equals("N"))
-			return true;
+			return false;
 		
-		return false;
+		return true;
 	}
 	public static int inputNum(){
 		while(true) {

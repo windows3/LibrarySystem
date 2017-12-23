@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.windows3.dao.BookDao;
 import com.windows3.entity.Book;
-import com.windows3.entity.User;
 
 public class BookDaoImpl implements BookDao {
 	private File file = new File("book.txt");
@@ -28,6 +29,7 @@ public class BookDaoImpl implements BookDao {
 		List<Book> uList = read();
 		// 新增书id+1
 		if (uList.isEmpty()) {
+			book.setBcount(0);
 			book.setId(1);
 			book.setStatus(1);
 		} else {
@@ -39,6 +41,7 @@ public class BookDaoImpl implements BookDao {
 			book.setStatus(1);
 			int newId = uList.get(uList.size() - 1).getId() + 1;
 			book.setId(newId);
+			book.setBcount(0);
 		}
 
 		uList.add(book);
@@ -50,18 +53,41 @@ public class BookDaoImpl implements BookDao {
 		if (uid < 1)
 			return false;
 
-		List<Book> uList = read();
-		for (Book book : uList) {
+		List<Book> bList = read();
+		if(bList.isEmpty()) {
+			return false;
+		}
+		for (Book book : bList) {
 			if (book.getId() == uid) {
 				if (book.getStatus() == 0) {
 					return false;
 				} else {
-					uList.remove(book);
+					bList.remove(book);
 					break;
 				}
 			}
 		}
-		return write(uList);
+		return write(bList);
+	}
+	@Override
+	public boolean delBookByBname(String bname) {
+		if (bname ==null)
+			return false;
+		List<Book> bList = read();
+		if(bList.isEmpty()) {
+			return false;
+		}
+		for (Book book : bList) {
+			if (book.getName().equals(bname)) {
+				if (book.getStatus() == 0) {
+					return false;
+				} else {
+					bList.remove(book);
+					break;
+				}
+			}
+		}
+		return write(bList);
 	}
 
 	@Override
@@ -71,9 +97,11 @@ public class BookDaoImpl implements BookDao {
 		List<Book> uList = read();
 		for (Book book : uList) {
 			if (book.getName().equals(newBook.getName())) {
-				if (book.getStatus() == 1)
+				if (book.getStatus() == 1) {
 					book.setStatus(0);
-				else
+					book.setBcount(book.getBcount()+1);
+				}
+				else 
 					book.setStatus(1);
 			}
 		}
@@ -109,7 +137,30 @@ public class BookDaoImpl implements BookDao {
 		List<Book> uList = read();
 		return uList;
 	}
+	@Override
+    public List<Book> queryBookByBcount(int num){
+		List<Book> uList = read();
+		 Collections.sort(uList, new Comparator<Book>() {
 
+			@Override
+			public int compare(Book o1, Book o2) {
+				// TODO Auto-generated method stub
+				return o2.getBcount()-o1.getBcount();
+			}
+		});
+		 List<Book> uList2 =new ArrayList<Book>();
+		 if(uList.size()<num) {
+			 for(int i=0;i<uList.size();i++) {
+				 uList2.add(uList.get(i));
+			 }
+		 }else {
+			 for(int i=0;i<num;i++) {
+				 uList2.add(uList.get(i));
+			 }
+		 }
+		return uList2;//返回热搜前五
+    	
+    }
 	@Override
 	public List<Book> queryBookByStatus(int status) {
 		if(status<1) {
@@ -184,5 +235,6 @@ public class BookDaoImpl implements BookDao {
 		}
 		return false;
 	}
+
 
 }

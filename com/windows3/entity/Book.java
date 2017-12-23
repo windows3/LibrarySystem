@@ -5,9 +5,14 @@ import java.io.Serializable;
 import com.windows3.entity.Book;
 
 public class Book implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5254700085702955953L;
 	private int id;
 	private String name;
-	private int status;
+	private int bcount;
+	private int status;//状态 1为在馆,0是被借走
 	
 	public Book() {
 	}
@@ -23,6 +28,14 @@ public class Book implements Serializable{
 		this.id = id;
 		this.name = name;
 		
+	}
+
+	public int getBcount() {
+		return bcount;
+	}
+
+	public void setBcount(int bcount) {
+		this.bcount = bcount;
 	}
 
 	public int getId() {
@@ -63,7 +76,11 @@ public class Book implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", 书名=" + name + ", 书的状态=" + status + "]";
+		if(this.status==1) {		
+			return "【图书编号:" + id + "】  【 书名:" + name + "】  【在馆/可借】";
+		}else {
+			return "【图书编号:" + id + "】  【 书名=" + name + "】, 【不在馆/不可借】";
+		}
 	}
 	
 	

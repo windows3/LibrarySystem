@@ -58,6 +58,9 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User queryUserByName(String uname) {
 		List<User> uList = read();
+		if(uList.isEmpty()) {
+			return null;
+		}
 		for (User user : uList) {
 			if (user.getName().equals(uname)) {
 				return user;

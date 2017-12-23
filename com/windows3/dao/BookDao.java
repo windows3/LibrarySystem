@@ -14,6 +14,8 @@ public interface BookDao {
 	Book queryBookByName(String uname);//根据书名字查
 	List<Book> queryAll();//查询所有书
 	List<Book> queryBookByStatus(int status);
+	boolean delBookByBname(String bname);
+	List<Book> queryBookByBcount(int num);//前几热借
 
 
 	

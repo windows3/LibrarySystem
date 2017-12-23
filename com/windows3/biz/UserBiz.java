@@ -11,4 +11,6 @@ public interface UserBiz {
 	User login(String uname, String password);
 
 	int queryUserByUname(String uname);
+
+	User queryUserByUid(int uid);
 }

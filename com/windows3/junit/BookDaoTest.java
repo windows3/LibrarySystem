@@ -1,6 +1,5 @@
 package com.windows3.junit;
 
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -14,10 +13,8 @@ public class BookDaoTest {
 	public void test() {
 		BookDao bookDao=new BookDaoImpl();
 		Book book=new Book("2");
-		Book book1=new Book("1");
-		
 		System.out.println(bookDao.addBook(book));
-		System.out.println(bookDao.addBook(book1));
+		
 		
 	}
 	@Test

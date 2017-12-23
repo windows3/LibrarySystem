@@ -49,7 +49,7 @@ public class RecordBizImpl implements RecordBiz {
 	}
 
 	@Override
-	public List<Record> queryRecordByUidreturned(int uid) {
+	public List<Record> queryRecordByUidReturned(int uid) {
 		// TODO Auto-generated method stub
 		return recordDao.queryRecordByBidReturned(uid);
 	}

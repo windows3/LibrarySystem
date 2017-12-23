@@ -41,9 +41,10 @@ public class BookBizImpl implements BookBiz {
 			}
 		}
 	}
+
 	@Override
 	public boolean lendBook(int bid) {
-		if (bid <1)
+		if (bid < 1)
 			return false;
 		else {
 			Book book = bookDao.queryBookByBid(bid);
@@ -111,7 +112,7 @@ public class BookBizImpl implements BookBiz {
 
 	@Override
 	public List<Book> queryByStatus(int status) {
-		List<Book> uList=bookDao.queryBookByStatus(status);
+		List<Book> uList = bookDao.queryBookByStatus(status);
 		return uList;
 	}
 
@@ -119,5 +120,24 @@ public class BookBizImpl implements BookBiz {
 	public int queryBookByBname(String bname) {
 		bookDao.queryBookByName(bname);
 		return bookDao.queryBookByName(bname).getId();
+	}
+
+	@Override
+	public boolean delBookByBid(int bid) {
+
+		return bookDao.delBookById(bid);
+
+	}
+
+	@Override
+	public boolean delBookByBname(String bname) {
+		// TODO Auto-generated method stub
+		return bookDao.delBookByBname(bname);
+	}
+
+	@Override
+	public List<Book> queryByBcount(int num) {
+		// TODO Auto-generated method stub
+		return bookDao.queryBookByBcount(num);
 	}
 }

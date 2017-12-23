@@ -1,7 +1,5 @@
 package com.windows3.junit;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.junit.Test;
 

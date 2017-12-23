@@ -12,18 +12,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.windows3.dao.BookDao;
 import com.windows3.dao.RecordDao;
 import com.windows3.entity.Book;
-import com.windows3.entity.Record;
-import com.windows3.entity.Record;
-import com.windows3.entity.Record;
-import com.windows3.entity.Record;
 import com.windows3.entity.Record;
 
 public class RecordDaoImpl implements RecordDao {
 	private File file = new File("record.txt");
 	private ObjectInputStream ois = null;
 	private ObjectOutputStream oos = null;
+	private BookDao bookDao = new BookDaoImpl();
 
 	@Override
 	public boolean addRecord(Record record) {
@@ -34,25 +32,30 @@ public class RecordDaoImpl implements RecordDao {
 		// 新增书id+1
 		if (uList.isEmpty()) {
 			record.setRid(1);
-			String lendTime=new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
-			String returnTime="0";
+			String lendTime = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
+			String returnTime = "0";
 			record.setLendTime(lendTime);
 			record.setReturnTime(returnTime);
 		} else {
 			for (Record record2 : uList) {
-				if(record2.getUid()==record.getUid()&&record2.getBid()==record.getBid()) {
-					if(record2.getReturnTime().equals("未归还")) {
+				if (record2.getUid() == record.getUid() && record2.getBid() == record.getBid()) {
+					if (record2.getReturnTime().equals("未归还")) {
 						record2.setReturnTime(new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date()));
-						return write(uList);	
+						uList.add(record);
+						boolean flag = bookDao.updateBook(bookDao.queryBookByBid(record.getBid()));
+						if (flag)
+							return write(uList);
+						else
+							return false;
 					}
-					if(!record2.getReturnTime().equals("未归还")&&!record2.getLendTime().equals("0")) {
+					if (!record2.getReturnTime().equals("未归还") && !record2.getLendTime().equals("0")) {
 						return false;
 					}
 				}
-				
+
 			}
-			String lendTime=new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
-			String returnTime="0";
+			String lendTime = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
+			String returnTime = "0";
 			record.setLendTime(lendTime);
 			record.setReturnTime(returnTime);
 			int newId = uList.get(uList.size() - 1).getRid() + 1;
@@ -60,7 +63,11 @@ public class RecordDaoImpl implements RecordDao {
 		}
 
 		uList.add(record);
-		return write(uList);
+		boolean flag = bookDao.updateBook(bookDao.queryBookByBid(record.getBid()));
+		if (flag)
+			return write(uList);
+		else
+			return false;
 	}
 
 	@Override
@@ -132,6 +139,7 @@ public class RecordDaoImpl implements RecordDao {
 		}
 		return uList2;
 	}
+
 	@Override
 	public List<Record> queryRecordByBidUnreturned(int uid) {
 		if (uid < 1) {
@@ -145,12 +153,13 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		} else {
 			for (Record record2 : uList) {
-				if (record2.getUid() == uid&&record2.getReturnTime().equals("未归还"))
+				if (record2.getUid() == uid && record2.getReturnTime().equals("未归还"))
 					uList2.add(record2);
 			}
 		}
 		return uList2;
 	}
+
 	@Override
 	public List<Record> queryRecordByBidReturned(int uid) {
 		if (uid < 1) {
@@ -164,12 +173,13 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		} else {
 			for (Record record2 : uList) {
-				if (record2.getUid() == uid&&!record2.getReturnTime().equals("未归还"))
+				if (record2.getUid() == uid && !record2.getReturnTime().equals("未归还"))
 					uList2.add(record2);
 			}
 		}
 		return uList2;
 	}
+
 	@Override
 	public List<Record> queryAll() {
 		return read();
@@ -251,7 +261,5 @@ public class RecordDaoImpl implements RecordDao {
 		}
 		return false;
 	}
-
-	
 
 }

@@ -1,6 +1,5 @@
 package com.windows3.junit;
 
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 

@@ -16,5 +16,5 @@ public interface RecordBiz {
 
 	List<Record> queryRecordByUidUnreturned(int uid);
 
-	List<Record> queryRecordByUidreturned(int uid);
+	List<Record> queryRecordByUidReturned(int uid);
 }

@@ -22,6 +22,11 @@ public interface BookBiz {
 	boolean lendBook(int bid);
 
 	int queryBookByBname(String bname);
+
+	boolean delBookByBid(int bid);
+
+	boolean delBookByBname(String bname);
+	List<Book> queryByBcount(int num);
 	
 
 }
