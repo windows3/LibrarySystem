@@ -14,8 +14,6 @@ import com.windows3.entity.User;
 import com.windows3.myutil.MyUtil;
 
 public class AdministratorMenu {
-	private final static String ADMIN_NAME = "张思农";
-	private final static String ADMIN_PASSWORD = "hebei208@";
 	private static UserBiz userBiz = new UserBizImpl();
 	private static BookBiz bookBiz = new BookBizImpl();;
 	private static Scanner input = new Scanner(System.in);;
@@ -50,7 +48,7 @@ public class AdministratorMenu {
 			// 登录
 			String name = MyUtil.inputName();
 			String password = MyUtil.inputPassword();
-			if (!(name.equals(ADMIN_NAME) || !password.equals(ADMIN_PASSWORD))) {
+			if (!(name.equals(MyUtil.ADMIN_NAME) || !password.equals(MyUtil.ADMIN_PASSWORD))) {
 				System.out.println("登录失败");
 			} else {
 				loginSucceed();
@@ -231,6 +229,7 @@ public class AdministratorMenu {
 				System.out.println("2==>查询此用户的已还借书记录");
 				System.out.println("3==>查询此用户的未还借书记录");
 				System.out.println("4==>冻结用户");
+				
 				System.out.println("0==>返回上一级");
 				int choice = MyUtil.inputNum(0, 4);
 				switch (choice) {
@@ -244,7 +243,7 @@ public class AdministratorMenu {
 					queryRecordUnreturned(uid);
 					continue;
 				case 4:
-					// freezeUser();// 还没写呢
+					freeUser();// 还没写呢 冻结,解冻
 					continue;
 				case 0:
 					// 退出
@@ -255,6 +254,244 @@ public class AdministratorMenu {
 					break;
 			}
 		}
+	}
+
+	private static void freeUser() {
+		while(true) {
+			System.out.println("****************************************");
+			System.out.println("1==>冻结用户");
+			System.out.println("2==>解冻用户");
+			System.out.println("3==>给用户充值");
+			System.out.println("0==>返回上一级");
+			int choice = MyUtil.inputNum(0, 3);
+			switch (choice) {
+			case 1:
+				freezeUser();//冻结
+				continue;
+			case 2:
+				UnfreezeUser();//解冻
+				continue;
+			case 3:
+				rechargeUser();//充值
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+
+				break;
+		}
+		
+	}
+
+	private static void rechargeUser() {
+		while (true) {
+			System.out.println("*************************");
+			System.out.println("1==>根据用户名充值");
+			System.out.println("2==>根据用户id充值");
+			System.out.println("0==>返回上一级");
+			int choice = MyUtil.inputNum(0, 2);
+			switch (choice) {
+			case 1:
+				rechargeUserByUname();//根据用户名解冻用户
+				continue;
+			case 2:
+				rechargeUserById();//根据用户id解冻用户
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+
+				break;
+			
+		}
+		
+	}
+
+	private static void rechargeUserById() {
+		while(true) {
+			System.out.println("*********************");
+			System.out.println("请输入用户id");
+			int uid=MyUtil.inputNum();
+			User user=userBiz.queryUserByUid(uid);
+			if(user==null) {
+				System.out.println("查无此人");
+			}else {
+				System.out.println("请输入充值金额");
+				int money=MyUtil.inputNum();
+				boolean flag=userBiz.rechargeUserByUname(uid,money);//指定冻结用户变成0
+				if(flag) {
+					System.out.println("冲值成功");
+				}else {
+					System.out.println("充值失败");
+				}
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+		
+	}
+
+	private static void rechargeUserByUname() {
+		while(true) {
+			System.out.println("*********************");
+			String uname =MyUtil.inputName();
+			int uid=userBiz.queryUserByUname(uname);
+			if(uid==-1) {
+				System.out.println("查无此人");
+			}else {
+				System.out.println("请输入充值金额");
+				int money=MyUtil.inputNum();
+				boolean flag=userBiz.rechargeUserByUname(uid,money);//指定冻结用户变成0
+				if(flag) {
+					System.out.println("冲值成功");
+				}else {
+					System.out.println("充值失败");
+				}
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+		
+	}
+
+	private static void UnfreezeUser() {
+		while(true) {
+			System.out.println("****************************************");
+			System.out.println("1==>根据用户名解冻用户");
+			System.out.println("2==>根据用户id解冻用户");
+			System.out.println("0==>返回上一级");
+			int choice = MyUtil.inputNum(0, 2);
+			switch (choice) {
+			case 1:
+				unFreezeUserByUname();//根据用户名解冻用户
+				continue;
+			case 2:
+				unFreezeUserById();//根据用户id解冻用户
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+
+				break;
+		}
+		
+	}
+
+	private static void unFreezeUserById() {
+		while(true) {
+			System.out.println("*********************");
+			System.out.println("请输入用户id");
+			int uid=MyUtil.inputNum();
+			User user=userBiz.queryUserByUid(uid);
+			if(user==null) {
+				System.out.println("查无此人");
+			}else {			
+				boolean flag=userBiz.updateStatus(uid,1);//指定冻结用户变成0
+				if(flag) {
+					System.out.println("冻结成功");
+				}else {
+					System.out.println("冻结失败");
+				}
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+		
+	}
+
+	private static void unFreezeUserByUname() {
+		while(true) {
+			System.out.println("*********************");
+			String uname =MyUtil.inputName();
+			int uid=userBiz.queryUserByUname(uname);
+			if(uid==-1) {
+				System.out.println("查无此人");
+			}else {			
+				boolean flag=userBiz.updateStatus(uid,1);//指定冻结用户变成0
+				if(flag) {
+					System.out.println("冻结成功");
+				}else {
+					System.out.println("冻结失败");
+				}
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+		
+	}
+
+	private static void freezeUser() {//冻结用户
+		while(true) {
+			System.out.println("****************************************");
+			System.out.println("1==>根据用户名冻结用户");
+			System.out.println("2==>根据用户id冻结用户");
+			System.out.println("0==>返回上一级");
+			int choice = MyUtil.inputNum(0, 2);
+			switch (choice) {
+			case 1:
+				freezeUserByUname();//根据用户名冻结用户
+				continue;
+			case 2:
+				freezeUserById();//根据用户id冻结用户
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+
+				break;
+		}
+		
+	}
+
+	private static void freezeUserById() {//根据用户id冻结用户
+		while(true) {
+			System.out.println("*********************");
+			System.out.println("请输入用户id");
+			int uid=MyUtil.inputNum();
+			User user=userBiz.queryUserByUid(uid);
+			if(user==null) {
+				System.out.println("查无此人");
+			}else {			
+				boolean flag=userBiz.updateStatus(uid,0);//指定冻结用户变成0
+				if(flag) {
+					System.out.println("冻结成功");
+				}else {
+					System.out.println("冻结失败");
+				}
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+		
+	}
+
+	private static void freezeUserByUname() {//根据用户名冻结用户
+		while(true) {
+			System.out.println("*********************");
+			String uname =MyUtil.inputName();
+			int uid=userBiz.queryUserByUname(uname);
+			if(uid==-1) {
+				System.out.println("查无此人");
+			}else {			
+				boolean flag=userBiz.updateStatus(uid,0);//指定冻结用户变成0
+				if(flag) {
+					System.out.println("冻结成功");
+				}else {
+					System.out.println("冻结失败");
+				}
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+		
 	}
 
 	private static void queryRecordUnreturned(int uid) {

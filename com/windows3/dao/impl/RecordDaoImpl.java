@@ -14,60 +14,47 @@ import java.util.List;
 
 import com.windows3.dao.BookDao;
 import com.windows3.dao.RecordDao;
-import com.windows3.entity.Book;
 import com.windows3.entity.Record;
 
-public class RecordDaoImpl implements RecordDao {
-	private File file = new File("record.txt");
-	private ObjectInputStream ois = null;
-	private ObjectOutputStream oos = null;
-	private BookDao bookDao = new BookDaoImpl();
+public class RecordDaoImpl<T> extends BaseDao<T> implements RecordDao {
+
+	public RecordDaoImpl() {
+		file = new File("record.txt");
+	}
 
 	@Override
 	public boolean addRecord(Record record) {
 		if (record == null) {
 			return false;
 		}
-		List<Record> uList = read();
-		// 新增书id+1
+		List<Record> uList = (List<Record>) read();
 		if (uList.isEmpty()) {
 			record.setRid(1);
-			String lendTime = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
-			String returnTime = "0";
+			String lendTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
 			record.setLendTime(lendTime);
-			record.setReturnTime(returnTime);
+			record.setReturnTime("未归还");
 		} else {
-			for (Record record2 : uList) {
-				if (record2.getUid() == record.getUid() && record2.getBid() == record.getBid()) {
-					if (record2.getReturnTime().equals("未归还")) {
-						record2.setReturnTime(new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date()));
-						uList.add(record);
-						boolean flag = bookDao.updateBook(bookDao.queryBookByBid(record.getBid()));
-						if (flag)
-							return write(uList);
-						else
-							return false;
-					}
-					if (!record2.getReturnTime().equals("未归还") && !record2.getLendTime().equals("0")) {
-						return false;
-					}
-				}
-
-			}
-			String lendTime = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
-			String returnTime = "0";
+			record.setRid(uList.get(uList.size() - 1).getRid() + 1);
+			String lendTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
 			record.setLendTime(lendTime);
-			record.setReturnTime(returnTime);
-			int newId = uList.get(uList.size() - 1).getRid() + 1;
-			record.setRid(newId);
+			record.setReturnTime("未归还");
 		}
-
 		uList.add(record);
-		boolean flag = bookDao.updateBook(bookDao.queryBookByBid(record.getBid()));
-		if (flag)
-			return write(uList);
-		else
+		return write((List<T>) uList);
+	}
+	@Override
+	public boolean addRecordRenew(int uid, int bid, int numDays) {
+		List<Record> uList = (List<Record>) read();
+		if (uList.isEmpty()||uList==null) {
 			return false;
+		} else {
+			for (Record record : uList) {
+				if(record.getBid()==bid&&record.getUid()==uid&&record.getReturnTime().equals("未归还")) {
+					record.setNumDays(record.getNumDays()+numDays);
+				}
+			}
+		}	
+		return write((List<T>) uList);
 	}
 
 	@Override
@@ -76,7 +63,7 @@ public class RecordDaoImpl implements RecordDao {
 			return false;
 		}
 		// 从文件中读出所有的Book
-		List<Record> uList = read();
+		List<Record> uList = (List<Record>) read();
 		// 新增记录rid+1
 		if (uList.isEmpty()) {
 			return false;
@@ -91,7 +78,30 @@ public class RecordDaoImpl implements RecordDao {
 				}
 			}
 		}
-		return write(uList);
+
+		return write((List<T>) uList);
+	}
+
+	@Override
+	public boolean updateRecordToReturn(Record newRecord) {
+		if (newRecord == null) {
+			return false;
+		}
+		// 从文件中读出所有的record
+		List<Record> uList = (List<Record>) read();
+		// 新增记录rid+1
+		if (uList.isEmpty()) {
+			return false;
+		} else {
+			for (Record record2 : uList) {
+				if (record2.getBid() == newRecord.getBid() && record2.getUid() == newRecord.getUid()
+						&& record2.getReturnTime().equals("未归还")) {
+					String returnTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
+					record2.setReturnTime(returnTime);
+				}
+			}
+		}
+		return write((List<T>) uList);
 	}
 
 	@Override
@@ -106,7 +116,7 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		}
 		// 从文件中读出所有的Book
-		List<Record> uList = read();
+		List<Record> uList = (List<Record>) read();
 		List<Record> uList2 = new ArrayList<Record>();
 		// 新增记录rid+1
 		if (uList.isEmpty()) {
@@ -126,7 +136,7 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		}
 		// 从文件中读出所有的Book
-		List<Record> uList = read();
+		List<Record> uList = (List<Record>) read();
 		List<Record> uList2 = new ArrayList<Record>();
 		// 新增记录rid+1
 		if (uList.isEmpty()) {
@@ -146,7 +156,7 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		}
 		// 从文件中读出所有的Book
-		List<Record> uList = read();
+		List<Record> uList = (List<Record>) read();
 		List<Record> uList2 = new ArrayList<Record>();
 		// 新增记录rid+1
 		if (uList.isEmpty()) {
@@ -166,7 +176,7 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		}
 		// 从文件中读出所有的Book
-		List<Record> uList = read();
+		List<Record> uList = (List<Record>) read();
 		List<Record> uList2 = new ArrayList<Record>();
 		// 新增记录rid+1
 		if (uList.isEmpty()) {
@@ -182,7 +192,7 @@ public class RecordDaoImpl implements RecordDao {
 
 	@Override
 	public List<Record> queryAll() {
-		return read();
+		return (List<Record>) read();
 	}
 
 	@Override
@@ -191,7 +201,7 @@ public class RecordDaoImpl implements RecordDao {
 			return null;
 		}
 		// 从文件中读出所有的record
-		List<Record> uList = read();
+		List<Record> uList = (List<Record>) read();
 		List<Record> uList2 = new ArrayList<Record>();
 		// 新增记录rid+1
 		if (uList.isEmpty()) {
@@ -205,61 +215,5 @@ public class RecordDaoImpl implements RecordDao {
 		return uList2;
 	}
 
-	/**
-	 * 从record.txt中读出所有record
-	 * 
-	 * @return
-	 */
-	public List<Record> read() {
-		// 第一次运行时，文件不存在，会崩
-		List<Record> uList = new ArrayList<Record>();
-		try {
-			ois = new ObjectInputStream(new FileInputStream(file));
-			uList = (List<Record>) ois.readObject();
-		} catch (FileNotFoundException e) {
-			// file.getParentFile().mkdirs();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (ois != null) {
-				try {
-					ois.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		System.out.println(uList);
-		return uList;
-	}
-
-	/**
-	 * 将List写入文件
-	 * 
-	 * @param uList
-	 * @return
-	 */
-	public boolean write(List<Record> uList) {
-		try {
-			oos = new ObjectOutputStream(new FileOutputStream(file));
-			oos.writeObject(uList);
-			return true;
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		} finally {
-			if (oos != null) {
-				try {
-					oos.close();
-				} catch (IOException e) {
-
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
-
+	
 }

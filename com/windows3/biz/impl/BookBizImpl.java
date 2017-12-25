@@ -3,12 +3,11 @@ package com.windows3.biz.impl;
 import java.util.List;
 
 import com.windows3.biz.BookBiz;
-import com.windows3.dao.BookDao;
 import com.windows3.dao.impl.BookDaoImpl;
 import com.windows3.entity.Book;
 
 public class BookBizImpl implements BookBiz {
-	private BookDao bookDao = new BookDaoImpl();
+	private BookDaoImpl bookDao = new BookDaoImpl();
 
 	@Override
 	public boolean addBook(Book book) {
@@ -118,8 +117,12 @@ public class BookBizImpl implements BookBiz {
 
 	@Override
 	public int queryBookByBname(String bname) {
-		bookDao.queryBookByName(bname);
-		return bookDao.queryBookByName(bname).getId();
+	
+		Book book=bookDao.queryBookByName(bname);
+		if(book==null) {
+			return -1;
+		}
+		return book.getId();
 	}
 
 	@Override
@@ -139,5 +142,11 @@ public class BookBizImpl implements BookBiz {
 	public List<Book> queryByBcount(int num) {
 		// TODO Auto-generated method stub
 		return bookDao.queryBookByBcount(num);
+	}
+
+	@Override
+	public List<Book> queryBookAll() {
+		
+		return bookDao.queryAll();
 	}
 }

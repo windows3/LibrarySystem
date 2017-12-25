@@ -12,6 +12,8 @@ public class User implements Serializable{
 	private int id;
 	private String name;
 	private String password;
+	private int money;
+	private int status;
 	
 	public User() {
 	}
@@ -22,11 +24,12 @@ public class User implements Serializable{
 		this.password = password;
 	}
 
-	public User(int id, String name, String password) {
+	public User(int id, String name, String password,int money) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.password = password;
+		this.money=money;
 	}
 
 	public int getId() {
@@ -35,6 +38,22 @@ public class User implements Serializable{
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getMoney() {
+		return money;
+	}
+
+	public void setMoney(int money) {
+		this.money = money;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public String getName() {
@@ -65,7 +84,7 @@ public class User implements Serializable{
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", 用户名=" + name + ", password=" + password + "]";
+		return "【用户编号:" + id + "】 【 用户名:" + name + "】  【积分剩余:" + money + "】";
 	}
 	
 	

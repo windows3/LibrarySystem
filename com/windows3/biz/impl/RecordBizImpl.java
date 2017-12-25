@@ -34,11 +34,11 @@ public class RecordBizImpl implements RecordBiz {
 	}
 
 	@Override
-	public boolean addRecord(int uid,int bid) {
-		if(uid<1||bid<1) {
+	public boolean addRecord(int uid,int bid,int numDays) {
+		if(uid<1||bid<1||numDays<1) {
 			return false;
 		}
-		Record record=new Record(uid,bid);
+		Record record=new Record(uid,bid,numDays);
 		return recordDao.addRecord(record);
 	}
 
@@ -52,6 +52,21 @@ public class RecordBizImpl implements RecordBiz {
 	public List<Record> queryRecordByUidReturned(int uid) {
 		// TODO Auto-generated method stub
 		return recordDao.queryRecordByBidReturned(uid);
+	}
+
+	@Override
+	public boolean updateRecord(int uid, int bid) {
+		if(uid<1||bid<1) {
+			return false;
+		}
+		Record record=new Record(uid,bid);
+		return recordDao.updateRecordToReturn(record);
+	}
+
+	@Override
+	public boolean addRecordRenew(int queryUserByUname, int bid, int numDays) {
+		
+		return recordDao.addRecordRenew(queryUserByUname,bid,numDays);
 	}
 
 }

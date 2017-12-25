@@ -4,6 +4,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MyUtil {
+	public final static String ADMIN_NAME = "张思农";
+	public final static String ADMIN_PASSWORD = "hebei208@";
 	private final static String INQUIRY_NAME="请输入名字:";
 	private final static String INQUIRY_PASSWORD="请输入您的密码:";
 	private static Scanner input = new Scanner(System.in);
@@ -44,7 +46,6 @@ public class MyUtil {
 	}
 	public static int inputNum(){
 		while(true) {
-			
 			try {
 				int num=input.nextInt();
 				return num;

@@ -16,7 +16,8 @@ public interface RecordDao {
 	List<Record> queryAll();//查询所有记录
 	List<Record> queryRecordByBidUnreturned(int uid);
 	List<Record> queryRecordByBidReturned(int uid);
-
-
+	public boolean updateRecordToReturn(Record newRecord);//还书
+	boolean addRecordRenew(int uid, int bid, int numDays);
+	
 	
 }

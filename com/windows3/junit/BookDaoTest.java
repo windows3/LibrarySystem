@@ -1,6 +1,5 @@
 package com.windows3.junit;
 
-
 import org.junit.Test;
 
 import com.windows3.dao.BookDao;
@@ -11,37 +10,47 @@ public class BookDaoTest {
 
 	@Test
 	public void test() {
-		BookDao bookDao=new BookDaoImpl();
-		Book book=new Book("2");
+		BookDao bookDao = new BookDaoImpl();
+		Book book = new Book("2");
 		System.out.println(bookDao.addBook(book));
-		
-		
+
 	}
+
 	@Test
 	public void test2() {
-		BookDao bookDao=new BookDaoImpl();
-		Book book=new Book("1");
+		BookDao bookDao = new BookDaoImpl();
+		Book book = new Book("1");
 		System.out.println(bookDao.updateBook(book));
 		System.out.println(bookDao.queryBookByName("1"));
-		
+
 	}
+
 	@Test
 	public void test3() {
-		BookDao bookDao=new BookDaoImpl();
-		
-		Book book=bookDao.queryBookByBid(1);
-		System.out.println(book);	
+		BookDao bookDao = new BookDaoImpl();
+
+		Book book = bookDao.queryBookByBid(1);
+		System.out.println(book);
 	}
+
 	@Test
 	public void test4() {
-		BookDao bookDao=new BookDaoImpl();
+		BookDao bookDao = new BookDaoImpl();
 		System.out.println(bookDao.delBookById(1));
-		
+
 	}
+
 	@Test
 	public void test5() {
-		BookDao bookDao=new BookDaoImpl();
+		BookDao bookDao = new BookDaoImpl();
 		System.out.println(bookDao.queryBookByStatus(1));
-		
+
+	}
+
+	@Test
+	public void test6() {
+		BookDao bookDao = new BookDaoImpl();
+		bookDao.updateBook(new Book("Î÷ÓÎ¼Ç"));
+
 	}
 }

@@ -6,7 +6,7 @@ import com.windows3.dao.impl.UserDaoImpl;
 import com.windows3.entity.User;
 
 public class UserBizImpl implements UserBiz {
-	private UserDao userDao = new UserDaoImpl();
+	private UserDaoImpl userDao = new UserDaoImpl();
 
 	@Override
 	public boolean register(User user) {
@@ -55,5 +55,37 @@ public class UserBizImpl implements UserBiz {
 	public User queryUserByUid(int uid) {
 		// TODO Auto-generated method stub
 		return userDao.queryUserById(uid);
+	}
+
+	@Override
+	public boolean updateMoneyByBname(String bname,int numDays) {
+		if(bname==null||numDays<1) {
+			return false;
+		}
+		return userDao.updateMoneyByBname(bname,numDays);
+	}
+
+	@Override
+	public boolean queryUserByUname_Money(String name) {
+		
+		return userDao.queryUserByUname_Money(name);
+	}
+
+	@Override
+	public boolean queryUserByUname_Status(String uname) {
+		
+		return userDao.queryUserByUname_Status(uname) ;
+	}
+
+	@Override
+	public boolean updateStatus(int uid, int i) {
+		
+		return userDao.updateStatus(uid,i);//指定冻结uid状态变成0或1
+	}
+
+	@Override
+	public boolean rechargeUserByUname(int uid, int money) {
+		// TODO Auto-generated method stub
+		return userDao.rechargeUserByUname(uid,money);//指定用户充值num积分
 	}
 }

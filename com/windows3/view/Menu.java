@@ -5,7 +5,7 @@ import com.windows3.myutil.MyUtil;
 public class Menu {
 	public static void mainMenu() {
 		
-		System.out.println("********欢迎访问图书管理系统********");
+		System.out.println("********欢迎使用智商检测系统********");
 		while (true) {
 			System.out.println("*********************");
 			System.out.println("1==>用户");
@@ -26,7 +26,7 @@ public class Menu {
 				// 退出
 				break;
 			}
-			System.out.println("感谢您的使用,再见!");
+			System.out.println("您的智商为正数,再见!");
 			break;
 
 		}

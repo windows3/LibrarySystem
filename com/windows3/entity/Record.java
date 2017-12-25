@@ -12,12 +12,27 @@ public class Record implements Serializable{
 	private String returnTime;
 	private int uid;
 	private int bid;
+	private int numDays;
 
+	public Record(int uid, int bid,int numDays) {
+		this.uid = uid;
+		this.bid = bid;
+		this.numDays=numDays;
+	}
+	
 	public Record(int uid, int bid) {
 		this.uid = uid;
 		this.bid = bid;
 	}
-	
+	public int getNumDays() {
+		return numDays;
+	}
+
+
+	public void setNumDays(int numDays) {
+		this.numDays = numDays;
+	}
+
 
 	public Record(int rid, String rtime, int uid, int bid) {
 		super();

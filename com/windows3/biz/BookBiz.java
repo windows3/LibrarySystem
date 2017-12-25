@@ -27,6 +27,8 @@ public interface BookBiz {
 
 	boolean delBookByBname(String bname);
 	List<Book> queryByBcount(int num);
+
+	List<Book> queryBookAll();//看看有没有书
 	
 
 }
