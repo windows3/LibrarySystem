@@ -16,6 +16,6 @@ public interface UserDao {
 	boolean queryUserByUname_Status(String uname);//查询是不是1
 	boolean updateStatus(int uid, int i);//指定冻结uid状态变成0或1
 	boolean rechargeUserByUname(int uid, int money);//指定用户充值num积分
-	
+	boolean queryUserByMoney_NumMoneys(int uid,int numDays);//看看积分还够不够
 	
 }

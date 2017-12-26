@@ -1,5 +1,7 @@
 package com.windows3.biz;
 
+import java.util.List;
+
 import com.windows3.entity.User;
 
 public interface UserBiz {
@@ -23,4 +25,8 @@ public interface UserBiz {
 	boolean updateStatus(int uid, int i);//指定冻结uid状态变成0或1
 
 	boolean rechargeUserByUname(int uid,int money);//指定用户充值num积分
+
+	List<User> queryUserAll();
+
+	boolean queryUserByMoney_NumMoneys(int uid,int numDays);//看看借书的钱够不够
 }

@@ -3,6 +3,7 @@ package com.windows3.dao.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.windows3.biz.SubscribeBiz;
 import com.windows3.dao.SubscribeDao;
 import com.windows3.entity.Subscribe;
 
@@ -90,7 +91,7 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 			}
 		}
 	}
-
+	@Override
 	public int querySubByBidReturn(int bid) {
 		if (bid < 1) {
 			return -1;
@@ -111,6 +112,47 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 				}
 				return -1;
 			}
+		}
+	}
+	@Override
+	public List<Subscribe> querySubUnexpire() {
+		List<Subscribe> uList = (List<Subscribe>) read();
+		List<Subscribe> uList2 = (List<Subscribe>) read();
+		// 新增用户id+1
+		if (uList.isEmpty()||uList==null) {
+			return null;
+		} else {
+			for (Subscribe sub : uList) {
+				String subTime2 = sub.getSubTime2();
+				String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
+				int d1 = Integer.parseInt(subTime2);
+				int d2 = Integer.parseInt(nowTime);
+				if (d2>d1) {
+					uList2.add(sub);
+				}
+			}
+			return uList2;
+		}
+	}
+
+	@Override
+	public List<Subscribe> querySubExpire() {
+		List<Subscribe> uList = (List<Subscribe>) read();
+		List<Subscribe> uList2 = (List<Subscribe>) read();
+		// 新增用户id+1
+		if (uList.isEmpty()||uList==null) {
+			return null;
+		} else {
+			for (Subscribe sub : uList) {
+				String subTime2 = sub.getSubTime2();
+				String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
+				int d1 = Integer.parseInt(subTime2);
+				int d2 = Integer.parseInt(nowTime);
+				if (d2<d1) {
+					uList2.add(sub);
+				}
+			}
+			return uList2;
 		}
 	}
 

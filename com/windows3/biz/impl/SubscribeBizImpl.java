@@ -61,5 +61,22 @@ public class SubscribeBizImpl implements SubscribeBiz {
 			return null;
 		}
 	}
+
+	@Override
+	public List<Subscribe> querySubAll() {
+		
+		return subDao.querySubAll();
+	}
+
+	@Override
+	public List<Subscribe> querySubUnexpire() {
+		return subDao.querySubUnexpire();
+	}
+
+	@Override
+	public List<Subscribe> querySubExpire() {
+		// TODO Auto-generated method stub
+		return subDao.querySubExpire();
+	}
 	
 }

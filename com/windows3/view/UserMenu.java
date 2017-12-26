@@ -64,7 +64,7 @@ public class UserMenu {
 			if (password.equals(password2)) {
 			} else {
 				System.out.println("您两次输入的密码不一样");
-				System.out.println("请从新登陆");
+				System.out.println("请重新注册");
 				continue;
 			}
 			if (userBiz.register(new User(name, password))) {
@@ -93,14 +93,16 @@ public class UserMenu {
 
 				uid = userBiz.queryUserByUname(name);
 				boolean flag1 = userBiz.queryUserByUname_Status(name);// 查询是否可登陆
+				System.out.println(userBiz.queryUserByUid(1));
 				if (!flag1) {
 					System.out.println("您的账户已被冻结,请联系管理员");
 				} else {
 					boolean flag = userBiz.queryUserByUname_Money(name);
 
-					if (!flag)
-						System.out.println("您的积分已欠费,请联系管理员充值");
-					else {
+					if (!flag) {
+						System.out.println("您的积分已不足50,请联系管理员充值");
+						reMoney();
+					} else {
 						System.out.println(user + "--登陆成功");
 						login(user, name);
 
@@ -108,6 +110,38 @@ public class UserMenu {
 				}
 			}
 		}
+	}
+
+	private static void reMoney() {
+		while (true) {
+			System.out.println("1==>充值");
+			System.out.println("2==>退出程序");
+			System.out.println("0==>返回上一级");
+			int choice = MyUtil.inputNum(0, 2);
+			switch (choice) {
+			case 1:
+				reMoney2();
+				continue;
+			case 2:
+				System.exit(0);
+			case 0:
+				break;
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+	}
+
+	private static void reMoney2() {
+		System.out.println("请输入您要充值的金额");
+		int money = MyUtil.inputNum();
+		boolean flag = userBiz.rechargeUserByUname(uid, money);// 指定冻结用户变成1
+		if (flag) {
+			System.out.println("冲值成功");
+		} else {
+			System.out.println("充值失败");
+		}
+
 	}
 
 	private static void login(User user, String name) {
@@ -249,8 +283,9 @@ public class UserMenu {
 				if (!flag3) {
 					System.out.println("您的积分不足,续借失败");
 				} else {
-//					boolean flag2 = recordBiz.addRecord(userBiz.queryUserByUname(uname), bid, numDays);
-					boolean flag2=recordBiz.addRecordRenew(userBiz.queryUserByUname(uname),bid,numDays);
+					// boolean flag2 = recordBiz.addRecord(userBiz.queryUserByUname(uname), bid,
+					// numDays);
+					boolean flag2 = recordBiz.addRecordRenew(userBiz.queryUserByUname(uname), bid, numDays);
 					if (flag2)
 						System.out.println("您成功续借了:" + book.getName());
 					else
@@ -268,7 +303,7 @@ public class UserMenu {
 			System.out.println("2==>通过书本id还书");
 			System.out.println("0==>返回上一级");
 			System.out.println("请输入您的选择:");
-			int choice = MyUtil.inputNum(0, 1);
+			int choice = MyUtil.inputNum(0, 2);
 			switch (choice) {
 			case 1:
 
@@ -403,22 +438,43 @@ public class UserMenu {
 			} else {
 				System.out.println("请输入您要借的天数");
 				int numDays = MyUtil.inputNum();
-				boolean flag3 = userBiz.updateMoneyByBname(bname, numDays);
-				if (!flag3) {
-					System.out.println("您的积分不足,借书失败");
+				boolean flag6 = userBiz.queryUserByMoney_NumMoneys(uid, numDays);
+				if (!flag6) {
+					System.out.println("您的积分不足以租" + numDays + "天,请及时充值");
+					moneyOrNumDays(uname);
 				} else {
-					boolean flag = bookBiz.lendBook(bname);
-					if (flag) {
-						boolean flag2 = recordBiz.addRecord(bid, bookBiz.queryBookByBname(bname), numDays);
-						if (flag2)
-							System.out.println("您成功借出一本书:" + bname);
+
+					boolean flag3 = userBiz.updateMoneyByBname(bname, numDays);
+					if (!flag3) {
+						System.out.println("您的积分不足,借书失败");
 					} else {
-						System.out.println("没有这本书");
+						boolean flag = bookBiz.lendBook(bname);
+						if (flag) {
+							boolean flag2 = recordBiz.addRecord(bid, bookBiz.queryBookByBname(bname), numDays);
+							if (flag2)
+								System.out.println("您成功借出一本书:" + bname);
+						} else {
+							System.out.println("没有这本书");
+						}
 					}
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
+		}
+	}
+
+	private static void moneyOrNumDays(String uname) {
+		System.out.println("*********************");
+		System.out.println("1==>充值");
+		System.out.println("2==>重新借书");
+		int choice = MyUtil.inputNum();// 确定
+		switch (choice) {
+		case 1:
+			reMoney();
+
+		case 2:
+			lendBookByBname(uname);
 		}
 	}
 

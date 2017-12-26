@@ -1,5 +1,7 @@
 package com.windows3.biz.impl;
 
+import java.util.List;
+
 import com.windows3.biz.UserBiz;
 import com.windows3.dao.UserDao;
 import com.windows3.dao.impl.UserDaoImpl;
@@ -87,5 +89,17 @@ public class UserBizImpl implements UserBiz {
 	public boolean rechargeUserByUname(int uid, int money) {
 		// TODO Auto-generated method stub
 		return userDao.rechargeUserByUname(uid,money);//指定用户充值num积分
+	}
+
+	@Override
+	public List<User> queryUserAll() {
+		// TODO Auto-generated method stub
+		return userDao.queryAll();
+	}
+
+	@Override
+	public boolean queryUserByMoney_NumMoneys(int uid,int numDays) {
+		
+		return userDao.queryUserByMoney_NumMoneys(uid,numDays);
 	}
 }

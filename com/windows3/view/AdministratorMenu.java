@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Scanner;
 import com.windows3.biz.BookBiz;
 import com.windows3.biz.RecordBiz;
+import com.windows3.biz.SubscribeBiz;
 import com.windows3.biz.UserBiz;
 import com.windows3.biz.impl.BookBizImpl;
 import com.windows3.biz.impl.RecordBizImpl;
+import com.windows3.biz.impl.SubscribeBizImpl;
 import com.windows3.biz.impl.UserBizImpl;
 import com.windows3.entity.Book;
 import com.windows3.entity.Record;
+import com.windows3.entity.Subscribe;
 import com.windows3.entity.User;
 import com.windows3.myutil.MyUtil;
 
@@ -18,6 +21,7 @@ public class AdministratorMenu {
 	private static BookBiz bookBiz = new BookBizImpl();;
 	private static Scanner input = new Scanner(System.in);;
 	private static RecordBiz recordBiz = new RecordBizImpl();
+	private static SubscribeBiz subBiz = new SubscribeBizImpl();
 
 	public static void mainMenu() {
 		while (true) {
@@ -63,10 +67,11 @@ public class AdministratorMenu {
 			System.out.println("*********************");
 			System.out.println("1==>管理图书");
 			System.out.println("2==>管理用户");
-			System.out.println("3==>管理记录");
+			System.out.println("3==>管理借书记录");
+			System.out.println("4==>管理预约记录");
 			System.out.println("0==>返回上一级");
 			System.out.println("请输入您的选择:");
-			int choice = MyUtil.inputNum(0, 3);
+			int choice = MyUtil.inputNum(0, 4);
 			switch (choice) {
 			case 1:
 				manageBook();
@@ -75,7 +80,10 @@ public class AdministratorMenu {
 				manageUser();// 管理用户
 				continue;
 			case 3:
-				manageRecord();// 管理记录
+				manageRecord();// 管理借书记录
+				continue;
+			case 4:
+				manageSub();// 管理预约记录
 				continue;
 			case 0:
 				// 退出
@@ -86,6 +94,64 @@ public class AdministratorMenu {
 
 		}
 
+	}
+
+	private static void manageSub() {
+		while (true) {
+			System.out.println("*********************");
+			System.out.println("1==>查询全部预约记录");
+			System.out.println("2==>查询未到期预约记录");
+			System.out.println("3==>查询到期预约记录");
+			System.out.println("0==>返回上一级");
+			System.out.println("请输入您的选择:");
+			int choice = MyUtil.inputNum(0, 3);
+			switch (choice) {
+			case 1:
+
+				querySubAll();
+				continue;
+			case 2:
+				querySubUnexpire();// 未到期
+				continue;
+			case 3:
+				querySubExpire();// 到期
+				continue;
+			case 0:
+				// 退出
+				break;
+			}
+			if (MyUtil.isGoOn())
+				break;
+		}
+
+	}
+
+	private static void querySubExpire() {
+		List<Subscribe> sList = subBiz.querySubExpire();
+		if (sList == null || sList.isEmpty()) {
+			System.out.println("没有到期记录预约记录");
+		} else {
+			System.out.println(sList);
+		}
+
+	}
+
+	private static void querySubUnexpire() {
+		List<Subscribe> sList = subBiz.querySubUnexpire();
+		if (sList == null || sList.isEmpty()) {
+			System.out.println("没有未到期记录预约记录");
+		} else {
+			System.out.println(sList);
+		}
+	}
+
+	private static void querySubAll() {
+		List<Subscribe> sList = subBiz.querySubAll();
+		if (sList == null || sList.isEmpty()) {
+			System.out.println("没有预约记录");
+		} else {
+			System.out.println(sList);
+		}
 	}
 
 	private static void manageRecord() {
@@ -185,23 +251,29 @@ public class AdministratorMenu {
 	private static void manageUser() {// 管理用户
 		while (true) {
 			System.out.println("*********************");
-			System.out.println("1==>通过uid管理用户");
-			System.out.println("2==>通过uname管理用户");
-			System.out.println("0==>返回上一级");
-			System.out.println("请输入您的选择:");
-			int choice = MyUtil.inputNum(0, 3);
-			switch (choice) {
-			case 1:
-				System.out.println("请输入您要操作的用户id");
-				int uid = MyUtil.inputNum();
-				manageUserByUid(uid);
-				continue;
-			case 2:
-				manageUserByUname();// 管理用户
-				continue;
-			case 0:
-				// 退出
-				break;
+			List<User> uList=userBiz.queryUserAll();
+			if(uList==null||uList.isEmpty()) {
+				System.out.println("暂无用户");
+			}else {
+				
+				System.out.println("1==>通过uid管理用户");
+				System.out.println("2==>通过uname管理用户");
+				System.out.println("0==>返回上一级");
+				System.out.println("请输入您的选择:");
+				int choice = MyUtil.inputNum(0, 3);
+				switch (choice) {
+				case 1:
+					System.out.println("请输入您要操作的用户id");
+					int uid = MyUtil.inputNum();
+					manageUserByUid(uid);
+					continue;
+				case 2:
+					manageUserByUname();// 管理用户
+					continue;
+				case 0:
+					// 退出
+					break;
+				}
 			}
 			if (MyUtil.isGoOn())
 				break;
@@ -229,7 +301,7 @@ public class AdministratorMenu {
 				System.out.println("2==>查询此用户的已还借书记录");
 				System.out.println("3==>查询此用户的未还借书记录");
 				System.out.println("4==>冻结用户");
-				
+
 				System.out.println("0==>返回上一级");
 				int choice = MyUtil.inputNum(0, 4);
 				switch (choice) {
@@ -257,7 +329,7 @@ public class AdministratorMenu {
 	}
 
 	private static void freeUser() {
-		while(true) {
+		while (true) {
 			System.out.println("****************************************");
 			System.out.println("1==>冻结用户");
 			System.out.println("2==>解冻用户");
@@ -266,13 +338,13 @@ public class AdministratorMenu {
 			int choice = MyUtil.inputNum(0, 3);
 			switch (choice) {
 			case 1:
-				freezeUser();//冻结
+				freezeUser();// 冻结
 				continue;
 			case 2:
-				UnfreezeUser();//解冻
+				UnfreezeUser();// 解冻
 				continue;
 			case 3:
-				rechargeUser();//充值
+				rechargeUser();// 充值
 				continue;
 			case 0:
 				// 退出
@@ -282,7 +354,7 @@ public class AdministratorMenu {
 
 				break;
 		}
-		
+
 	}
 
 	private static void rechargeUser() {
@@ -294,10 +366,10 @@ public class AdministratorMenu {
 			int choice = MyUtil.inputNum(0, 2);
 			switch (choice) {
 			case 1:
-				rechargeUserByUname();//根据用户名解冻用户
+				rechargeUserByUname();// 根据用户名解冻用户
 				continue;
 			case 2:
-				rechargeUserById();//根据用户id解冻用户
+				rechargeUserById();// 根据用户id解冻用户
 				continue;
 			case 0:
 				// 退出
@@ -306,60 +378,60 @@ public class AdministratorMenu {
 			if (MyUtil.isGoOn())
 
 				break;
-			
+
 		}
-		
+
 	}
 
 	private static void rechargeUserById() {
-		while(true) {
+		while (true) {
 			System.out.println("*********************");
 			System.out.println("请输入用户id");
-			int uid=MyUtil.inputNum();
-			User user=userBiz.queryUserByUid(uid);
-			if(user==null) {
+			int uid = MyUtil.inputNum();
+			User user = userBiz.queryUserByUid(uid);
+			if (user == null) {
 				System.out.println("查无此人");
-			}else {
+			} else {
 				System.out.println("请输入充值金额");
-				int money=MyUtil.inputNum();
-				boolean flag=userBiz.rechargeUserByUname(uid,money);//指定冻结用户变成0
-				if(flag) {
+				int money = MyUtil.inputNum();
+				boolean flag = userBiz.rechargeUserByUname(uid, money);// 指定冻结用户变成0
+				if (flag) {
 					System.out.println("冲值成功");
-				}else {
+				} else {
 					System.out.println("充值失败");
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
 		}
-		
+
 	}
 
 	private static void rechargeUserByUname() {
-		while(true) {
+		while (true) {
 			System.out.println("*********************");
-			String uname =MyUtil.inputName();
-			int uid=userBiz.queryUserByUname(uname);
-			if(uid==-1) {
+			String uname = MyUtil.inputName();
+			int uid = userBiz.queryUserByUname(uname);
+			if (uid == -1) {
 				System.out.println("查无此人");
-			}else {
+			} else {
 				System.out.println("请输入充值金额");
-				int money=MyUtil.inputNum();
-				boolean flag=userBiz.rechargeUserByUname(uid,money);//指定冻结用户变成0
-				if(flag) {
+				int money = MyUtil.inputNum();
+				boolean flag = userBiz.rechargeUserByUname(uid, money);// 指定冻结用户变成1
+				if (flag) {
 					System.out.println("冲值成功");
-				}else {
+				} else {
 					System.out.println("充值失败");
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
 		}
-		
+
 	}
 
 	private static void UnfreezeUser() {
-		while(true) {
+		while (true) {
 			System.out.println("****************************************");
 			System.out.println("1==>根据用户名解冻用户");
 			System.out.println("2==>根据用户id解冻用户");
@@ -367,10 +439,10 @@ public class AdministratorMenu {
 			int choice = MyUtil.inputNum(0, 2);
 			switch (choice) {
 			case 1:
-				unFreezeUserByUname();//根据用户名解冻用户
+				unFreezeUserByUname();// 根据用户名解冻用户
 				continue;
 			case 2:
-				unFreezeUserById();//根据用户id解冻用户
+				unFreezeUserById();// 根据用户id解冻用户
 				continue;
 			case 0:
 				// 退出
@@ -380,54 +452,54 @@ public class AdministratorMenu {
 
 				break;
 		}
-		
+
 	}
 
 	private static void unFreezeUserById() {
-		while(true) {
+		while (true) {
 			System.out.println("*********************");
 			System.out.println("请输入用户id");
-			int uid=MyUtil.inputNum();
-			User user=userBiz.queryUserByUid(uid);
-			if(user==null) {
+			int uid = MyUtil.inputNum();
+			User user = userBiz.queryUserByUid(uid);
+			if (user == null) {
 				System.out.println("查无此人");
-			}else {			
-				boolean flag=userBiz.updateStatus(uid,1);//指定冻结用户变成0
-				if(flag) {
+			} else {
+				boolean flag = userBiz.updateStatus(uid, 1);// 指定冻结用户变成0
+				if (flag) {
 					System.out.println("冻结成功");
-				}else {
+				} else {
 					System.out.println("冻结失败");
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
 		}
-		
+
 	}
 
 	private static void unFreezeUserByUname() {
-		while(true) {
+		while (true) {
 			System.out.println("*********************");
-			String uname =MyUtil.inputName();
-			int uid=userBiz.queryUserByUname(uname);
-			if(uid==-1) {
+			String uname = MyUtil.inputName();
+			int uid = userBiz.queryUserByUname(uname);
+			if (uid == -1) {
 				System.out.println("查无此人");
-			}else {			
-				boolean flag=userBiz.updateStatus(uid,1);//指定冻结用户变成0
-				if(flag) {
+			} else {
+				boolean flag = userBiz.updateStatus(uid, 1);// 指定冻结用户变成0
+				if (flag) {
 					System.out.println("冻结成功");
-				}else {
+				} else {
 					System.out.println("冻结失败");
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
 		}
-		
+
 	}
 
-	private static void freezeUser() {//冻结用户
-		while(true) {
+	private static void freezeUser() {// 冻结用户
+		while (true) {
 			System.out.println("****************************************");
 			System.out.println("1==>根据用户名冻结用户");
 			System.out.println("2==>根据用户id冻结用户");
@@ -435,10 +507,10 @@ public class AdministratorMenu {
 			int choice = MyUtil.inputNum(0, 2);
 			switch (choice) {
 			case 1:
-				freezeUserByUname();//根据用户名冻结用户
+				freezeUserByUname();// 根据用户名冻结用户
 				continue;
 			case 2:
-				freezeUserById();//根据用户id冻结用户
+				freezeUserById();// 根据用户id冻结用户
 				continue;
 			case 0:
 				// 退出
@@ -448,50 +520,50 @@ public class AdministratorMenu {
 
 				break;
 		}
-		
+
 	}
 
-	private static void freezeUserById() {//根据用户id冻结用户
-		while(true) {
+	private static void freezeUserById() {// 根据用户id冻结用户
+		while (true) {
 			System.out.println("*********************");
 			System.out.println("请输入用户id");
-			int uid=MyUtil.inputNum();
-			User user=userBiz.queryUserByUid(uid);
-			if(user==null) {
+			int uid = MyUtil.inputNum();
+			User user = userBiz.queryUserByUid(uid);
+			if (user == null) {
 				System.out.println("查无此人");
-			}else {			
-				boolean flag=userBiz.updateStatus(uid,0);//指定冻结用户变成0
-				if(flag) {
+			} else {
+				boolean flag = userBiz.updateStatus(uid, 0);// 指定冻结用户变成0
+				if (flag) {
 					System.out.println("冻结成功");
-				}else {
+				} else {
 					System.out.println("冻结失败");
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
 		}
-		
+
 	}
 
-	private static void freezeUserByUname() {//根据用户名冻结用户
-		while(true) {
+	private static void freezeUserByUname() {// 根据用户名冻结用户
+		while (true) {
 			System.out.println("*********************");
-			String uname =MyUtil.inputName();
-			int uid=userBiz.queryUserByUname(uname);
-			if(uid==-1) {
+			String uname = MyUtil.inputName();
+			int uid = userBiz.queryUserByUname(uname);
+			if (uid == -1) {
 				System.out.println("查无此人");
-			}else {			
-				boolean flag=userBiz.updateStatus(uid,0);//指定冻结用户变成0
-				if(flag) {
+			} else {
+				boolean flag = userBiz.updateStatus(uid, 0);// 指定冻结用户变成0
+				if (flag) {
 					System.out.println("冻结成功");
-				}else {
+				} else {
 					System.out.println("冻结失败");
 				}
 			}
 			if (MyUtil.isGoOn())
 				break;
 		}
-		
+
 	}
 
 	private static void queryRecordUnreturned(int uid) {
