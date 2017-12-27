@@ -24,6 +24,8 @@ public class AdministratorMenu {
 	private static SubscribeBiz subBiz = new SubscribeBizImpl();
 
 	public static void mainMenu() {
+		System.out.println("管理员账户:"+MyUtil.ADMIN_NAME);
+		System.out.println("管理员密码:"+MyUtil.ADMIN_PASSWORD);
 		while (true) {
 			System.out.println("*********************");
 			System.out.println("1==>登录");
@@ -300,7 +302,7 @@ public class AdministratorMenu {
 				System.out.println("1==>查询此用户的全部借书记录");
 				System.out.println("2==>查询此用户的已还借书记录");
 				System.out.println("3==>查询此用户的未还借书记录");
-				System.out.println("4==>冻结用户");
+				System.out.println("4==>冻结/解冻/充值");
 
 				System.out.println("0==>返回上一级");
 				int choice = MyUtil.inputNum(0, 4);
@@ -366,10 +368,10 @@ public class AdministratorMenu {
 			int choice = MyUtil.inputNum(0, 2);
 			switch (choice) {
 			case 1:
-				rechargeUserByUname();// 根据用户名解冻用户
+				rechargeUserByUname();// 根据用户名充值
 				continue;
 			case 2:
-				rechargeUserById();// 根据用户id解冻用户
+				rechargeUserById();// 根据用户id充值
 				continue;
 			case 0:
 				// 退出
@@ -394,7 +396,7 @@ public class AdministratorMenu {
 			} else {
 				System.out.println("请输入充值金额");
 				int money = MyUtil.inputNum();
-				boolean flag = userBiz.rechargeUserByUname(uid, money);// 指定冻结用户变成0
+				boolean flag = userBiz.rechargeUserByUname(uid, money);// 充值
 				if (flag) {
 					System.out.println("冲值成功");
 				} else {
@@ -571,7 +573,7 @@ public class AdministratorMenu {
 			System.out.println("查无此人");
 		} else {
 			List<Record> rList = recordBiz.queryRecordByUidUnreturned(uid);
-			if (rList == null)
+			if (rList == null||rList.isEmpty())
 				System.out.println("此用户没有未还书记录");
 			else
 				System.out.println(rList);
@@ -583,7 +585,7 @@ public class AdministratorMenu {
 			System.out.println("查无此人");
 		} else {
 			List<Record> rList = recordBiz.queryRecordByUidReturned(uid);
-			if (rList == null)
+			if (rList == null||rList.isEmpty())
 				System.out.println("此用户没有还书记录");
 			else
 				System.out.println(rList);
@@ -595,7 +597,7 @@ public class AdministratorMenu {
 			System.out.println("查无此人");
 		} else {
 			List<Record> rList = recordBiz.queryRecordByUid(uid);
-			if (rList == null)
+			if (rList == null||rList.isEmpty())
 				System.out.println("此用户没有借书记录");
 			else
 				System.out.println(rList);
@@ -607,14 +609,18 @@ public class AdministratorMenu {
 			System.out.println("*********************");
 			System.out.println("1==>添加图书");
 			System.out.println("2==>删除图书");
+			System.out.println("3==>查看图书");
 			System.out.println("0==>返回上一级");
-			int choice = MyUtil.inputNum(0, 2);
+			int choice = MyUtil.inputNum(0, 3);
 			switch (choice) {
 			case 1:
 				addBook();
 				continue;
 			case 2:
 				delBook();
+				continue;
+			case 3:
+				queryBook();
 				continue;
 			case 0:
 				// 退出
@@ -623,6 +629,16 @@ public class AdministratorMenu {
 			if (MyUtil.isGoOn())
 				break;
 		}
+	}
+
+	private static void queryBook() {
+		List<Book> bList=bookBiz.queryBookAll();
+		if(bList==null||bList.isEmpty()) {
+			System.out.println("图书馆无书,请您尽快添加");
+		}else{
+			System.out.println(bList);
+		}
+		
 	}
 
 	private static void addBook() {// 添加书本

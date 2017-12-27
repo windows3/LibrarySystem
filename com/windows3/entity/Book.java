@@ -77,9 +77,9 @@ public class Book implements Serializable{
 	@Override
 	public String toString() {
 		if(this.status==1) {		
-			return "【图书编号:" + id + "】  【 书名:" + name + "】  【在馆/可借】";
+			return "【图书编号:" + id + "】  【 书名:" + name + "】  【在馆/可借】 【被借次数:"+bcount+"】";
 		}else {
-			return "【图书编号:" + id + "】  【 书名=" + name + "】, 【不在馆/不可借】";
+			return "【图书编号:" + id + "】  【 书名=" + name + "】, 【不在馆/不可借】 【被借次数:"+bcount+"】";
 		}
 	}
 	

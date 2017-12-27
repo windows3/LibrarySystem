@@ -19,4 +19,10 @@ public interface SubscribeBiz {
 	List<Subscribe> querySubUnexpire();//未到期
 
 	List<Subscribe> querySubExpire();//到期
+
+	List<Subscribe> querySubByUidAll(int uid);//某人全部预约信息
+
+	List<Subscribe> querySubUnexpire(int uid);//某人未到期预约信息
+
+	List<Subscribe> querySubExpire(int uid);//某人到期预约信息
 }

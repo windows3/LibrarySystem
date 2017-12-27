@@ -16,6 +16,7 @@ public class BaseDao<T> {
 	private ObjectInputStream ois = null;
 	private ObjectOutputStream oos = null;
 	
+	@SuppressWarnings("unchecked")
 	protected List<T> read() {
 		// 第一次运行时，文件不存在，会崩
 		List<T> uList = new ArrayList<T>();

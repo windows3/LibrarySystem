@@ -44,7 +44,9 @@ public class RecordBizImpl implements RecordBiz {
 
 	@Override
 	public List<Record> queryRecordByUidUnreturned(int uid) {
-		
+		if(uid<1) {
+			return null;
+		}
 		return recordDao.queryRecordByBidUnreturned(uid);
 	}
 

@@ -7,6 +7,7 @@ import com.windows3.dao.impl.BookDaoImpl;
 import com.windows3.entity.Book;
 
 public class BookBizImpl implements BookBiz {
+	@SuppressWarnings("rawtypes")
 	private BookDaoImpl bookDao = new BookDaoImpl();
 
 	@Override
@@ -109,6 +110,7 @@ public class BookBizImpl implements BookBiz {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Book> queryByStatus(int status) {
 		List<Book> uList = bookDao.queryBookByStatus(status);

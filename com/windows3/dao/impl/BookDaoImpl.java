@@ -1,12 +1,6 @@
 package com.windows3.dao.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,12 +14,14 @@ public class BookDaoImpl<T> extends BaseDao<T> implements BookDao {
 public BookDaoImpl() {
 	file = new File("book.txt");
 }
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addBook(Book book) {
 		if (book == null) {
 			return false;
 		}
 		// 从文件中读出所有的Book
+	
 		List<Book> uList = (List<Book>) read();
 		// 新增书id+1
 		if (uList.isEmpty()) {
@@ -48,6 +44,7 @@ public BookDaoImpl() {
 		return write((List<T>) uList);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean delBookById(int uid) {
 		if (uid < 1)
@@ -69,6 +66,7 @@ public BookDaoImpl() {
 		}
 		return write((List<T>) bList);
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean delBookByBname(String bname) {
 		if (bname ==null)
@@ -90,6 +88,7 @@ public BookDaoImpl() {
 		return write((List<T>) bList);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean updateBook(Book newBook) {
 		if (newBook == null)
@@ -109,6 +108,7 @@ public BookDaoImpl() {
 		return write((List<T>) bList);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Book queryBookByBid(int uid) {
 		List<Book> bList = (List<Book>) read();
@@ -120,6 +120,7 @@ public BookDaoImpl() {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Book queryBookByName(String bname) {
 		if(bname==null) {
@@ -133,11 +134,13 @@ public BookDaoImpl() {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Book> queryAll() {
 		List<Book> bList = (List<Book>) read();
 		return bList;
 	}
+	@SuppressWarnings("unchecked")
 	@Override
     public List<Book> queryBookByBcount(int num){
 		List<Book> bList = (List<Book>) read();
@@ -165,6 +168,7 @@ public BookDaoImpl() {
 		return uList2;//返回热搜前五
     	
     }
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Book> queryBookByStatus(int status) {
 		if(status<1) {

@@ -15,26 +15,21 @@ public class SubscribeBizImpl implements SubscribeBiz {
 	public boolean querySubByBid(int bid) {//找找有没有这条记录,时间对不对的上
 		List<Subscribe> sList=subDao.querySubByBid(bid);
 		if(sList==null||sList.isEmpty())
-			return false;
+			return true;
 		else {
-			for (Subscribe subscribe : sList) {
-				if(subscribe.getBid()==bid) {
-					String nowTime = new SimpleDateFormat("yyyyMMdd").format(new Date()); //格式化为 hhmmss
-					int nowTime2 = Integer.parseInt(nowTime);
-					int subTime2=Integer.parseInt(subscribe.getSubTime2());
-					if(nowTime2>subTime2) {
-						return true;
-					}
-				}
-			}
 			return false;
 		}
 	}
 
 	@Override
 	public boolean addSub(Subscribe subscribe,int numDay) {
+		if(subscribe==null||numDay<0) {
+			return false;
+		}else {
+			
+			return subDao.addSub(subscribe, numDay);
+		}
 		
-		return subDao.addSub(subscribe, numDay);
 	}
 
 	@Override
@@ -77,6 +72,30 @@ public class SubscribeBizImpl implements SubscribeBiz {
 	public List<Subscribe> querySubExpire() {
 		// TODO Auto-generated method stub
 		return subDao.querySubExpire();
+	}
+
+	@Override
+	public List<Subscribe> querySubByUidAll(int uid) {
+		if(uid<1) {
+			return null;
+		}
+		return subDao.querySubByUid(uid);
+	}
+
+	@Override
+	public List<Subscribe> querySubUnexpire(int uid) {
+		if(uid<1) {
+			return null;
+		}
+		return subDao.querySubUnexpire(uid);
+	}
+
+	@Override
+	public List<Subscribe> querySubExpire(int uid) {
+		if(uid<1) {
+			return null;
+		}
+		return subDao.querySubExpire(uid);
 	}
 	
 }

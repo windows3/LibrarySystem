@@ -1,5 +1,6 @@
 package com.windows3.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 			subscribe.setSid(1);
 			String subTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
 			subscribe.setSubTime(subTime);
-			int d1Number1 = Integer.parseInt(subTime) + numDay;
+			int d1Number1 = Integer.parseInt(subTime) + numDay*100;
 			Integer a = d1Number1;
 			String subTime2 = a.toString();
 			subscribe.setSubTime2(subTime2);
@@ -58,7 +59,7 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 			return null;
 		} else {
 			List<Subscribe> uList = (List<Subscribe>) read();
-			List<Subscribe> uList2 = (List<Subscribe>) read();
+			List<Subscribe> uList2 = new ArrayList<Subscribe> ();
 			// 新增用户id+1
 			if (uList.isEmpty()||uList==null) {
 				return null;
@@ -67,7 +68,7 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 					if (sub.getUid() == uid)
 						uList2.add(sub);
 				}
-				return uList;
+				return uList2;
 			}
 		}
 	}
@@ -78,16 +79,22 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 			return null;
 		} else {
 			List<Subscribe> uList = (List<Subscribe>) read();
-			List<Subscribe> uList2 = (List<Subscribe>) read();
+			List<Subscribe> uList2 = new ArrayList<Subscribe>();
 			// 新增用户id+1
 			if (uList.isEmpty()) {
 				return null;
 			} else {
 				for (Subscribe sub : uList) {
-					if (sub.getBid() == bid)
-						uList2.add(sub);
+					if (sub.getBid() == bid) {
+						String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date()); //格式化为 hhmmss
+						int nowTime2 = Integer.parseInt(nowTime);
+						int subTime2=Integer.parseInt(sub.getSubTime2());
+						if(nowTime2>subTime2) {
+							uList2.add(sub);
+						}
+					}
 				}
-				return uList;
+				return uList2;
 			}
 		}
 	}
@@ -117,7 +124,7 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 	@Override
 	public List<Subscribe> querySubUnexpire() {
 		List<Subscribe> uList = (List<Subscribe>) read();
-		List<Subscribe> uList2 = (List<Subscribe>) read();
+		List<Subscribe> uList2 =new ArrayList<Subscribe>();
 		// 新增用户id+1
 		if (uList.isEmpty()||uList==null) {
 			return null;
@@ -138,7 +145,7 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 	@Override
 	public List<Subscribe> querySubExpire() {
 		List<Subscribe> uList = (List<Subscribe>) read();
-		List<Subscribe> uList2 = (List<Subscribe>) read();
+		List<Subscribe> uList2 = new ArrayList<Subscribe>();
 		// 新增用户id+1
 		if (uList.isEmpty()||uList==null) {
 			return null;
@@ -150,6 +157,51 @@ public class SubscribeDaoImpl<T> extends BaseDao<T> implements SubscribeDao {
 				int d2 = Integer.parseInt(nowTime);
 				if (d2<d1) {
 					uList2.add(sub);
+				}
+			}
+			return uList2;
+		}
+	}
+
+	@Override
+	public List<Subscribe> querySubUnexpire(int uid) {
+		List<Subscribe> uList = (List<Subscribe>) read();
+		List<Subscribe> uList2 =new ArrayList<Subscribe>();
+		// 新增用户id+1
+		if (uList.isEmpty()||uList==null) {
+			return null;
+		} else {
+			for (Subscribe sub : uList) {
+				if(sub.getUid()==uid) {				
+					String subTime2 = sub.getSubTime2();
+					String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
+					int d1 = Integer.parseInt(subTime2);
+					int d2 = Integer.parseInt(nowTime);
+					if (d2>d1) {
+						uList2.add(sub);
+					}
+				}
+			}
+			return uList2;
+		}
+	}
+	@Override
+	public List<Subscribe> querySubExpire(int uid) {
+		List<Subscribe> uList = (List<Subscribe>) read();
+		List<Subscribe> uList2 =new ArrayList<Subscribe>();
+		// 新增用户id+1
+		if (uList.isEmpty()||uList==null) {
+			return null;
+		} else {
+			for (Subscribe sub : uList) {
+				if(sub.getUid()==uid) {				
+					String subTime2 = sub.getSubTime2();
+					String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
+					int d1 = Integer.parseInt(subTime2);
+					int d2 = Integer.parseInt(nowTime);
+					if (d1>d2) {
+						uList2.add(sub);
+					}
 				}
 			}
 			return uList2;

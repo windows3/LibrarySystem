@@ -60,45 +60,56 @@ public class UserBizImpl implements UserBiz {
 	}
 
 	@Override
-	public boolean updateMoneyByBname(String bname,int numDays) {
-		if(bname==null||numDays<1) {
+	public boolean updateMoneyByBname(String uname,int numDays) {
+		if(uname==null||numDays<1) {
 			return false;
 		}
-		return userDao.updateMoneyByBname(bname,numDays);
+		return userDao.updateMoneyByBname(uname,numDays);
 	}
 
 	@Override
 	public boolean queryUserByUname_Money(String name) {
-		
+		if(name==null) {
+			return false;
+		}
 		return userDao.queryUserByUname_Money(name);
 	}
 
 	@Override
 	public boolean queryUserByUname_Status(String uname) {
-		
+		if(uname==null) {
+			return false;
+		}
 		return userDao.queryUserByUname_Status(uname) ;
 	}
 
 	@Override
 	public boolean updateStatus(int uid, int i) {
-		
+		if(uid<0||i<0) {
+			return false;
+		}
 		return userDao.updateStatus(uid,i);//指定冻结uid状态变成0或1
 	}
 
 	@Override
 	public boolean rechargeUserByUname(int uid, int money) {
-		// TODO Auto-generated method stub
+		if(uid<0||money<0) {
+			return false;
+		}
 		return userDao.rechargeUserByUname(uid,money);//指定用户充值num积分
 	}
 
 	@Override
 	public List<User> queryUserAll() {
-		// TODO Auto-generated method stub
+		
 		return userDao.queryAll();
 	}
 
 	@Override
 	public boolean queryUserByMoney_NumMoneys(int uid,int numDays) {
+		if(uid<0||numDays<0) {
+			return false;
+		}
 		
 		return userDao.queryUserByMoney_NumMoneys(uid,numDays);
 	}

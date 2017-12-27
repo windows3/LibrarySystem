@@ -68,7 +68,7 @@ public class UserDaoImpl<T> extends BaseDao<T> implements UserDao {
 	}
 
 	@Override
-	public boolean updateMoneyByBname(String bname,int numDays) {// 减少用户的n倍积分10分
+	public boolean updateMoneyByBname(String uname,int numDays) {// 减少用户的n倍积分10分
 		// 从文件中读出所有的User
 		List<User> uList = (List<User>) read();
 		// 新增用户id+1
@@ -76,12 +76,13 @@ public class UserDaoImpl<T> extends BaseDao<T> implements UserDao {
 			return false;
 		} else {
 			for (User user2 : uList) {
-				if (user2.getName().equals(bname)) {
+				if (user2.getName().equals(uname)) {
 					int moneys=user2.getMoney() - numDays*10;
-					if(moneys<0) 
+					if(moneys<0) { 
 						return false;
-					else
-					user2.setMoney(moneys);
+					}else {
+						user2.setMoney(moneys);						
+					}
 				}
 			}
 		}
@@ -159,10 +160,10 @@ public class UserDaoImpl<T> extends BaseDao<T> implements UserDao {
 			for (User user : uList) {
 				if (user.getId() == uid) {
 					user.setStatus(i);
-					return true;
+					
 				}
 			}
-			return false;
+			return write((List<T>) uList);
 		}
 	}
 
@@ -177,7 +178,7 @@ public class UserDaoImpl<T> extends BaseDao<T> implements UserDao {
 		else {
 			for (User user : uList) {
 				if (user.getId() == uid) {
-					user.setMoney(money);
+					user.setMoney(money+user.getMoney());
 					user.setStatus(1);
 					
 				}
