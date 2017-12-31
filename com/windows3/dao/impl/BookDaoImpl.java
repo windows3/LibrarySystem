@@ -54,7 +54,10 @@ public BookDaoImpl() {
 		if(bList.isEmpty()) {
 			return false;
 		}
+		if(bList.get(bList.size()-1).getId()==uid)
+			return false;
 		for (Book book : bList) {
+			 
 			if (book.getId() == uid) {
 				if (book.getStatus() == 0) {
 					return false;
@@ -104,7 +107,6 @@ public BookDaoImpl() {
 					book.setStatus(1);
 			}
 		}
-		System.out.println(bList);
 		return write((List<T>) bList);
 	}
 

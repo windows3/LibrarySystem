@@ -133,7 +133,7 @@ public class AdministratorMenu {
 		if (sList == null || sList.isEmpty()) {
 			System.out.println("没有到期记录预约记录");
 		} else {
-			System.out.println(sList);
+			MyUtil.println(sList);
 		}
 
 	}
@@ -143,7 +143,7 @@ public class AdministratorMenu {
 		if (sList == null || sList.isEmpty()) {
 			System.out.println("没有未到期记录预约记录");
 		} else {
-			System.out.println(sList);
+			MyUtil.println(sList);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class AdministratorMenu {
 		if (sList == null || sList.isEmpty()) {
 			System.out.println("没有预约记录");
 		} else {
-			System.out.println(sList);
+			MyUtil.println(sList);
 		}
 	}
 
@@ -228,7 +228,7 @@ public class AdministratorMenu {
 					if (rList == null)
 						System.out.println("此用户没有未还书记录");
 					else
-						System.out.println(rList);
+						MyUtil.println(rList);
 					if (MyUtil.isGoOn())
 						break;
 				}
@@ -246,7 +246,7 @@ public class AdministratorMenu {
 			if (rList == null)
 				System.out.println("此ID图书没有被借阅过");
 			else
-				System.out.println(rList);
+				MyUtil.println(rList);;
 		}
 	}
 
@@ -576,7 +576,7 @@ public class AdministratorMenu {
 			if (rList == null||rList.isEmpty())
 				System.out.println("此用户没有未还书记录");
 			else
-				System.out.println(rList);
+				MyUtil.println(rList);
 		}
 	}
 
@@ -588,7 +588,7 @@ public class AdministratorMenu {
 			if (rList == null||rList.isEmpty())
 				System.out.println("此用户没有还书记录");
 			else
-				System.out.println(rList);
+				MyUtil.println(rList);
 		}
 	}
 
@@ -600,7 +600,7 @@ public class AdministratorMenu {
 			if (rList == null||rList.isEmpty())
 				System.out.println("此用户没有借书记录");
 			else
-				System.out.println(rList);
+				MyUtil.println(rList);
 		}
 	}
 
@@ -609,9 +609,10 @@ public class AdministratorMenu {
 			System.out.println("*********************");
 			System.out.println("1==>添加图书");
 			System.out.println("2==>删除图书");
-			System.out.println("3==>查看图书");
+			System.out.println("3==>查看所有图书");
+			System.out.println("4==>查看热门书籍");
 			System.out.println("0==>返回上一级");
-			int choice = MyUtil.inputNum(0, 3);
+			int choice = MyUtil.inputNum(0, 4);
 			switch (choice) {
 			case 1:
 				addBook();
@@ -622,6 +623,9 @@ public class AdministratorMenu {
 			case 3:
 				queryBook();
 				continue;
+			case 4:
+				queryBookHot();
+				continue;
 			case 0:
 				// 退出
 				break;
@@ -631,12 +635,23 @@ public class AdministratorMenu {
 		}
 	}
 
+	private static void queryBookHot() {
+		List<Book> bList=bookBiz.queryBookAll();
+		if(bList==null||bList.isEmpty()) {
+			System.out.println("没有书籍");
+		}else {
+			List<Book> bList2=bookBiz.queryByBcount(bList.size());
+			MyUtil.println(bList2);
+		}
+		
+	}
+
 	private static void queryBook() {
 		List<Book> bList=bookBiz.queryBookAll();
 		if(bList==null||bList.isEmpty()) {
 			System.out.println("图书馆无书,请您尽快添加");
 		}else{
-			System.out.println(bList);
+			MyUtil.println(bList);
 		}
 		
 	}
@@ -657,25 +672,31 @@ public class AdministratorMenu {
 	}
 
 	private static void delBook() {// 删除书
-		while (true) {
-			System.out.println("*********************");
-			System.out.println("1==>根据书名删书");
-			System.out.println("2==>根据id删书");
-			System.out.println("0==>返回上一级");
-			int choice = MyUtil.inputNum(0, 2);
-			switch (choice) {
-			case 1:
-				delBookByBname();
-				continue;
-			case 2:
-				delBookByBid();
-				continue;
-			case 0:
-				// 退出
-				break;
+		List<Book> bList=bookBiz.queryBookAll();
+		if(bList==null||bList.isEmpty()) {
+			System.out.println("无书");
+		}else {
+			
+			while (true) {
+				System.out.println("*********************");
+				System.out.println("1==>根据书名删书");
+				System.out.println("2==>根据id删书");
+				System.out.println("0==>返回上一级");
+				int choice = MyUtil.inputNum(0, 2);
+				switch (choice) {
+				case 1:
+					delBookByBname();
+					continue;
+				case 2:
+					delBookByBid();
+					continue;
+				case 0:
+					// 退出
+					break;
+				}
+				if (MyUtil.isGoOn())
+					break;
 			}
-			if (MyUtil.isGoOn())
-				break;
 		}
 
 	}
@@ -684,23 +705,42 @@ public class AdministratorMenu {
 		System.out.println("*********************");
 		System.out.println("请输入您要删除的书的id");
 		int bid = MyUtil.inputNum();
-		System.out.println(bookBiz.queryBookByBid(bid));
-		boolean flag = bookBiz.delBookByBid(bid);
-		if (flag) {
-			System.out.println("删除成功");
-		} else {
-			System.err.println("删除失败");
+		Book book=bookBiz.queryBookByBid(bid);
+		if(book==null) {
+			System.out.println("没有这本书");
+		}else {
+			if(book.getStatus()==0) {
+				System.out.println("这本书已被借出,不可删除");
+			}else {
+				
+				boolean flag = bookBiz.delBookByBid(bid);
+				if (flag) {
+					System.out.println("删除成功");
+				} else {
+					System.err.println("删除失败");
+				}
+			}
 		}
 
 	}
 
 	private static void delBookByBname() {
 		String bname = MyUtil.inputName();
-		boolean flag = bookBiz.delBookByBname(bname);
-		if (flag)
-			System.out.println("删除成功");
-		else
-			System.out.println("删除失败");
+		int bid=bookBiz.queryBookByBname(bname);
+		if(bid==-1) {
+			System.out.println("没有这本书");
+		}else {
+			Book book=bookBiz.queryBookByBid(bid);
+			if(book.getStatus()==0) {
+				System.out.println("这本书已被外借，不可删除");
+			}else {				
+				boolean flag = bookBiz.delBookByBname(bname);
+				if (flag)
+					System.out.println("删除成功");
+				else
+					System.out.println("删除失败");
+			}
+		}
 	}
 
 }

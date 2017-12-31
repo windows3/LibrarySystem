@@ -23,4 +23,6 @@ public interface RecordBiz {
 	boolean updateRecord(int uid, int bid);
 
 	boolean addRecordRenew(int queryUserByUname, int bid, int numDays);//续借
+
+	boolean queryRecordByUidBidToBoolean(int uid, int bid);//找找这个人界的书是不是有这一本，是不是没换
 }

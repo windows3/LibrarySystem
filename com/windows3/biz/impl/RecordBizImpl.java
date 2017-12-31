@@ -71,4 +71,24 @@ public class RecordBizImpl implements RecordBiz {
 		return recordDao.addRecordRenew(queryUserByUname,bid,numDays);
 	}
 
+	@Override
+	public boolean queryRecordByUidBidToBoolean(int uid, int bid) {
+		//找找这个人界的书是不是有这一本，是不是没换
+		if(uid<1||bid<1) {
+			return false;
+		}else {
+		List<Record> rList=recordDao.queryRecordByUid_Bid(uid, bid);
+		if(rList==null||rList.isEmpty()) {
+			return false;
+		}else {
+			for (Record record : rList) {
+				if(record.getBid()==bid&&record.getUid()==uid&&record.getReturnTime().equals("未归还")) {
+					return true;
+				}
+			}
+				return false;
+			}
+		}
+	}
+
 }

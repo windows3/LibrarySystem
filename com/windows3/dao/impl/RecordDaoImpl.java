@@ -90,7 +90,7 @@ public class RecordDaoImpl<T> extends BaseDao<T> implements RecordDao {
 		// 从文件中读出所有的record
 		List<Record> uList = (List<Record>) read();
 		// 新增记录rid+1
-		if (uList.isEmpty()) {
+		if (uList==null||uList.isEmpty()) {
 			return false;
 		} else {
 			for (Record record2 : uList) {

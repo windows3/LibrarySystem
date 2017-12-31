@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.print.DocFlavor.READER;
+
 import com.windows3.biz.BookBiz;
 import com.windows3.biz.RecordBiz;
 import com.windows3.biz.SubscribeBiz;
@@ -32,9 +34,10 @@ public class UserMenu {
 			System.out.println("*********************");
 			System.out.println("1==>注册");
 			System.out.println("2==>登录");
+			System.out.println("3==>找回密码");
 			System.out.println("0==>退出");
 			System.out.println("请输入您的选择:");
-			int choice = MyUtil.inputNum(0, 2);
+			int choice = MyUtil.inputNum(0, 3);
 
 			switch (choice) {
 			case 1:
@@ -44,6 +47,10 @@ public class UserMenu {
 				// 登录
 				loginMainMenu();
 				continue;
+			case 3:
+				// 登录
+				verification();// 密码找回
+				continue;
 			case 0:
 				// 退出
 				break;
@@ -51,6 +58,26 @@ public class UserMenu {
 			break;
 
 		}
+	}
+
+	private static void verification() {
+		String uname = MyUtil.inputName();
+		int bid = userBiz.queryUserByUname(uname);
+
+		String ver = MyUtil.verification();
+		System.out.println(ver);
+		System.out.println("请输入验证码:");
+		String ver2 = input.next();
+		if (bid == -1 || ver2.equals(ver)) {// 万一有问题,不能告诉用户是没有这个账户
+			User user = userBiz.queryUserByUid(bid);
+			String password = MyUtil.decode(user.getPassword());
+			System.out.println("您的密码是");
+			System.out.println(password);
+		} else {
+			System.out.println("找回失败");
+
+		}
+
 	}
 
 	private static void registerMainMenu() {// 注册
@@ -80,22 +107,22 @@ public class UserMenu {
 	}
 
 	private static void loginMainMenu() {// 登录菜单
-		List<User> uList=userBiz.queryUserAll();
-		if(uList==null||uList.isEmpty()) {
+		List<User> uList = userBiz.queryUserAll();
+		if (uList == null || uList.isEmpty()) {
 			System.out.println("没有用户");
-		}else {
-			
+		} else {
+
 			while (true) {
 				System.out.println("*********************");
 				// 登录
 				String name = MyUtil.inputName();
 				String password = MyUtil.inputPassword();
 				User user = userBiz.login(name, password);
-				
+
 				if (userBiz.login(name, password) == null) {
 					System.out.println("您输入的用户不存在");
 				} else {
-					
+
 					uid = userBiz.queryUserByUname(name);
 					boolean flag1 = userBiz.queryUserByUname_Status(name);// 查询是否可登陆
 					// System.out.println(userBiz.queryUserByUid(1));
@@ -150,16 +177,67 @@ public class UserMenu {
 
 	}
 
+	private static void subAgain(Subscribe sub, String uname) {
+		String time = sub.getSubTime2();
+		String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
+		int d1 = Integer.parseInt(time);
+		int d2 = Integer.parseInt(nowTime);
+		if (d1 / 100 > d2 / 100) {
+			System.out.println("您预约的编号为" + sub.getBid() + "的书还有" + (d1 - d2) / 100 + "天到馆,到点请及时取书");
+		} else if (d1 / 100 == d2 / 100) {
+			System.out.println("您预约的编号为" + sub.getBid() + "的书,今天到馆,请及时取书");
+		} else {
+			int bid = sub.getBid();
+			Book book = bookBiz.queryBookByBid(bid);
+			if (book.getStatus() == 1) {
+				System.out.println("您预约的书已到馆,请取书");
+				System.out.println("1==>取书");
+				System.out.println("0==>返回上一级");
+				System.out.println("请输入您的选择:");
+				int choice = MyUtil.inputNum(0, 1);
+				switch (choice) {
+				case 1:
+					fetchBook(bid, uname);
+					break;
+				case 0:
+					break;
+				}
+			} else {
+				System.out.println("您预约的书到期,被人借走,下次请及时取书");
+			}
+		}
+	}
+
+	private static void fetchBook(int bid, String uname) {
+		Book book = bookBiz.queryBookByBid(bid);
+		System.out.println("请输入您要借的天数");
+		int numDays = MyUtil.inputNum();
+		boolean flag6 = userBiz.queryUserByMoney_NumMoneys(uid, numDays);
+		if (!flag6) {
+			System.out.println("您的积分不足以租" + numDays + "天,请及时充值");
+			moneyOrNumDays(uname);
+		} else {
+			boolean flag3 = userBiz.updateMoneyByBname(uname, numDays);
+			if (flag3) {
+				boolean flag = bookBiz.lendBook(bid);
+				if (flag) {
+					boolean flag2 = recordBiz.addRecord(userBiz.queryUserByUname(uname), bid, numDays);
+					if (flag2)
+						System.out.println("您成功借出一本:" + book.getName());
+				} else {
+
+					System.out.println("借书失败");
+					subBookNow(bid, uname);// 预
+				}
+			}
+		}
+
+	}
+
 	private static void login(User user, String name) {
 		Subscribe sub = subBiz.querySubByUid(uid);
 		if (sub != null) {
-			String time = sub.getSubTime2();
-			String nowTime = new SimpleDateFormat("yyyyMMddhh").format(new Date());
-			int d1 = Integer.parseInt(time);
-			int d2 = Integer.parseInt(nowTime);
-			if (d1 > d2) {
-				System.out.println("您预约的编号为" + sub.getBid() + "的书还有" + d1 / d2 + "天到馆,到点请及时取书");
-			}
+			subAgain(sub, name);
 		} else {
 			while (true) {
 				System.out.println("******************");
@@ -206,7 +284,7 @@ public class UserMenu {
 			System.out.println("4==>预约");
 			System.out.println("0==>返回上一级");
 			System.out.println("请输入您的选择:");
-			int choice = MyUtil.inputNum(0, 3);
+			int choice = MyUtil.inputNum(0, 4);
 			switch (choice) {
 			case 1:
 				querySubAll();
@@ -277,14 +355,13 @@ public class UserMenu {
 		}
 
 	}
-	
 
 	private static void querySuExpire() {
 		List<Subscribe> sList = subBiz.querySubExpire(uid);
 		if (sList == null || sList.isEmpty()) {
 			System.out.println("您没有到期的预约信息");
 		} else {
-			System.out.println(sList);
+			MyUtil.println(sList);
 		}
 
 	}
@@ -294,7 +371,7 @@ public class UserMenu {
 		if (sList == null || sList.isEmpty()) {
 			System.out.println("您没有未到期的预约信息");
 		} else {
-			System.out.println(sList);
+			MyUtil.println(sList);
 		}
 
 	}
@@ -304,7 +381,7 @@ public class UserMenu {
 		if (sList == null || sList.isEmpty()) {
 			System.out.println("您没有预约信息");
 		} else {
-			System.out.println(sList);
+			MyUtil.println(sList);
 		}
 	}
 
@@ -347,7 +424,12 @@ public class UserMenu {
 	private static void allLeaseMainMenu() {// 本人所有租赁记录
 		System.out.println("********************");
 		List<Record> rList = recordBiz.queryRecordByUid(uid);
-		System.out.println(rList);
+		if (rList == null || rList.isEmpty()) {
+			System.out.println("没有记录");
+		} else {
+
+			MyUtil.println(rList);
+		}
 	}
 
 	private static void returnedLeaseMainMenu() {// 查看本人已归还租赁记录
@@ -355,7 +437,7 @@ public class UserMenu {
 		if (rList == null || rList.isEmpty())
 			System.out.println("您没有已归还记录");
 		else
-			System.out.println(rList);
+			MyUtil.println(rList);
 	}
 
 	private static void unreturnedLeaseMainMenu(String uname) {// 查看本人未归还租赁记录
@@ -510,7 +592,8 @@ public class UserMenu {
 		if (bList == null || bList.isEmpty())
 			System.out.println("没有可借图书");
 		else {
-			System.out.println(bList);
+
+			MyUtil.println(bList);
 			while (true) {
 				System.out.println("*********************");
 				System.out.println("1==>借书");
@@ -564,10 +647,8 @@ public class UserMenu {
 			if (bid == -1) {
 				System.out.println("没有这本书");
 			} else {
-				int status = bookBiz.queryBookByBid(bid).getStatus();
-				if (status == 0) {
-					System.out.println(bname + "此本书已被借走");
-					subBookNow(bid, uname);// 预约
+				boolean flag4 = queryBookStatus(bid, uname);
+				if (flag4) {
 				} else {
 					System.out.println("请输入您要借的天数");
 					int numDays = MyUtil.inputNum();
@@ -629,17 +710,23 @@ public class UserMenu {
 						System.out.println("您的积分不足以租" + numDays + "天,请及时充值");
 						moneyOrNumDays(uname);
 					} else {
-						boolean flag3 = userBiz.updateMoneyByBname(uname, numDays);
-						if (flag3) {
-							boolean flag = bookBiz.lendBook(bid);
-							if (flag) {
-								boolean flag2 = recordBiz.addRecord(userBiz.queryUserByUname(uname), bid, numDays);
-								if (flag2)
-									System.out.println("您成功借出一本:" + book.getName());
-							} else {
+						boolean flag9 = queryBookStatus(bid, uname);
+						if (!flag9) {
+							System.out.println("已被借");
+						} else {
 
-								System.out.println("借书失败");
-								subBookNow(bid, uname);// 预
+							boolean flag3 = userBiz.updateMoneyByBname(uname, numDays);
+							if (flag3) {
+								boolean flag = bookBiz.lendBook(bid);
+								if (flag) {
+									boolean flag2 = recordBiz.addRecord(userBiz.queryUserByUname(uname), bid, numDays);
+									if (flag2)
+										System.out.println("您成功借出一本:" + book.getName());
+								} else {
+
+									System.out.println("借书失败");
+
+								}
 							}
 						}
 					}
@@ -654,8 +741,33 @@ public class UserMenu {
 		}
 	}
 
+	private static boolean queryBookStatus(int bid, String uname) {
+		Book book = bookBiz.queryBookByBid(bid);
+		if (book == null) {
+			System.out.println("没有这本书");
+			return false;
+		} else {
+			int status = book.getStatus();
+			if (status == 0) {
+				System.out.println(book.getName() + "此本书已被借走");
+				boolean flag8 = recordBiz.queryRecordByUidBidToBoolean(uid, bid);
+				if (flag8) {
+					System.out.println("这本书被您借走了,不可以预约");
+				} else {
+					subBookNow(bid, uname);// 预约
+				}
+				return false;
+			} else {
+				return true;
+			}
+		}
+		// TODO Auto-generated method stub
+
+	}
+
 	private static void subBookNow(int bid, String uname) {
 		while (true) {
+
 			System.out.println("1==>预约");
 			System.out.println("0==>返回");
 			int choice = MyUtil.inputNum(0, 1);
@@ -752,7 +864,7 @@ public class UserMenu {
 		while (true) {
 			int uid = userBiz.queryUserByUname(uname);
 			List<Record> rList = recordBiz.queryRecordByBid(uid);
-			if (rList.isEmpty() || rList.isEmpty()) {
+			if (rList == null || rList.isEmpty()) {
 				System.out.println("您没有借书记录");
 			} else {
 				System.out.println("请输入书本的id");
@@ -767,7 +879,9 @@ public class UserMenu {
 							if (flag) {
 								boolean flag2 = recordBiz.updateRecord(userBiz.queryUserByUname(uname), bid);
 								if (flag2)
-									System.out.println("您成功还了一本:");
+									System.out.println("您成功还了一本:" + book.getName());
+								else
+									System.out.println("您已经还过这本书了");
 							} else {
 								System.out.println("还书失败");
 							}
